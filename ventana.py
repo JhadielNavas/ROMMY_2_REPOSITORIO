@@ -49,9 +49,9 @@ class Ventana(
         self.pantalla = pygame.display.set_mode((constantes.ANCHO_VENTANA,constantes.ALTO_VENTANA))
         self.cartel_alerta = CartelAlerta(self.pantalla, "", 0, 0)
         pygame.display.set_caption("Rummy500")
-        self.img_fondo_mesa = pygame.image.load("./assets/Imagenes/fondos/fondo_mesa.png").convert()
+        #self.img_fondo_mesa = pygame.image.load("./assets/Imagenes/fondos/fondo_mesa.png").convert()
 # Forzamos que la imagen mida lo mismo que la ventana
-        self.img_fondo_mesa = pygame.transform.scale(self.img_fondo_mesa, (constantes.ANCHO_VENTANA, constantes.ALTO_VENTANA))
+        #self.img_fondo_mesa = pygame.transform.scale(self.img_fondo_mesa, (constantes.ANCHO_VENTANA, constantes.ALTO_VENTANA))
         # Datos de juego
         self.lista_elementos = {
             "nombre_creador": "",
