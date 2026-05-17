@@ -91,8 +91,8 @@ class MenuInstruccionesMixin:
         Args:
             menu_instrucciones: Instancia del menú donde agregar los controles
         """
-        x = (constantes.ANCHO_MENU_INSTRUCCIONES - constantes.ELEMENTO_PEQUENO_ANCHO) / 1.83
-        y = constantes.ALTO_MENU_INSTRUCCIONES - constantes.ELEMENTO_PEQUENO_ALTO * 1.8
+        x = (constantes.ANCHO_MENU_INSTRUCCIONES - constantes.ELEMENTO_PEQUENO_ANCHO) / 1.69
+        y = constantes.ALTO_MENU_INSTRUCCIONES - constantes.ELEMENTO_PEQUENO_ALTO * 0.8
         ancho = constantes.ELEMENTO_PEQUENO_ANCHO
         alto = constantes.ELEMENTO_PEQUENO_ALTO
         accion = lambda: controladores.Mostrar_seccion(self, self.menu_inicio,solo_ocultar=solo_ocultar)
@@ -118,7 +118,7 @@ class MenuInstruccionesMixin:
 
             img = pygame.image.load(ruta_img).convert_alpha()
 
-            escala = 0.6  # ajusta el tamaño
+            escala = 0.28  # ajusta el tamaño
             nuevo_ancho = int(img.get_width() * escala)
             nuevo_alto = int(img.get_height() * escala)
 

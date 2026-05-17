@@ -248,8 +248,8 @@ class Elemento_texto:
                     self.pantalla.blit(self.superficie_texto, rect_scroll)
 
             # dibujar scroll si corresponde
-            if self.scroll_activo and self.scroll_rect:
-                pygame.draw.rect(self.pantalla, (100,100,100), self.scroll_rect)
+            #if self.scroll_activo and self.scroll_rect:
+                #pygame.draw.rect(self.pantalla, (100,100,100), self.scroll_rect)
 
 
     
