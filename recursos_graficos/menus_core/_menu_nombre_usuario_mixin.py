@@ -1,5 +1,8 @@
 """Mixin para el menú de nombre de usuario"""
 
+import pygame
+from logica_interfaz.archivo_de_importaciones import importar_desde_carpeta
+
 from recursos_graficos import constantes
 from recursos_graficos.menu import Menu
 from recursos_graficos.elementos_de_interfaz_de_usuario import Elemento_texto, EntradaTexto
@@ -17,7 +20,11 @@ class MenuNombreUsuarioMixin:
             
         Returns:
             Menu: Instancia del menú de nombre de usuario
+
         """
+        ancho_menu = 1200
+        alto_menu = 900
+
         x_menu, y_menu = self.centrar(
             constantes.ANCHO_MENU_NOM_USUARIO,
             constantes.ALTO_MENU_NOM_USUARIO
@@ -35,11 +42,85 @@ class MenuNombreUsuarioMixin:
             constantes.REDONDEO_PRONUNCIADO
         )
         
-        self.crear_elementos_usuario(menu_nombre_usuario, creador_sala)
+        # Fondo personalizado SOLO para UNIRSE A LA SALA
+        if not creador_sala:
+            ruta_panel = importar_desde_carpeta(
+                nombre_archivo="Imagenes/fondos/caja_servidor.png",
+                nombre_carpeta="assets"
+            )
+
+            panel = pygame.image.load(ruta_panel).convert_alpha()
+            # Tamaño deseado de la imagen
+            ancho_panel = 1200
+            alto_panel = 900
+
+            # Escalar la imagen
+            panel = pygame.transform.smoothscale(panel, (ancho_panel, alto_panel))
+
+            # Calcular posición centrada
+            x_panel = (ancho_menu - ancho_panel) // 2 + 329
+            y_panel = (alto_menu - alto_panel) // 2 + 50
+
+            # Agregar imagen centrada
+            menu_nombre_usuario.agregar_imagen(panel, (x_panel, y_panel), 1)
+
+            self.crear_elementos_unirse(menu_nombre_usuario, ancho_menu, alto_menu)
+        else:
+            self.crear_elementos_usuario(menu_nombre_usuario, creador_sala)
+
         self.crear_elementos_control_usuario(menu_nombre_usuario, creador_sala)
-        
+
         self.elementos_creados.append(menu_nombre_usuario)
         return menu_nombre_usuario
+
+    def crear_elementos_unirse(self, menu_nombre_usuario, ancho_menu, alto_menu):
+        """Diseño personalizado para UNIRSE A LA SALA con imagen caja_servidor."""
+
+        # Título dentro de la parte blanca de la imagen
+        menu_nombre_usuario.crear_elemento(
+            Clase=Elemento_texto,
+            x=600,
+            y=170,
+            un_juego=self,
+            texto="INGRESE SU NOMBRE",
+            ancho=660,
+            alto=120,
+            tamaño_fuente=60,
+            fuente=constantes.FUENTE_TITULO,
+            color=None,
+            radio_borde=0,
+            color_texto=(187, 165, 113),
+            color_borde=None,
+            grosor_borde=0,
+            alineacion="centro",
+            alineacion_vertical="centro"
+        )
+
+        # Entrada de texto dentro de la zona roja
+        menu_nombre_usuario.crear_elemento(
+            Clase=EntradaTexto,
+            x=815,
+            y=470,
+            un_juego=self,
+            limite_caracteres=20,
+            texto="nombre",
+            ancho=660,
+            alto=100,
+            tamaño_fuente=60,
+            fuente=constantes.FUENTE_ESTANDAR,
+            color=None,
+            radio_borde=0,
+            color_texto=(255, 230, 230),
+            color_borde=None,
+            grosor_borde=0,
+            grupo=[],
+            permitir_espacios=False,
+            permitir_numeros=False,
+            permitir_especiales=False,
+            cartel_alerta=self.cartel_alerta,
+            alineacion="izquierda",
+            alineacion_vertical="centro"
+        )
     
     def crear_elementos_usuario(self, menu_nombre_usuario, creador_sala):
         """Crea los campos de entrada dinámicamente según el modo
@@ -134,7 +215,7 @@ class MenuNombreUsuarioMixin:
         from logica_interfaz.archivo_de_importaciones import importar_desde_carpeta
         
         # 1. Definir alto fijo para simetría profesional
-        ALTO_FIJO_BOTONES = 120 
+        ALTO_FIJO_BOTONES = 115 
         
         if not creador_sala:
             mostrar = self.menu_inicio
@@ -149,13 +230,13 @@ class MenuNombreUsuarioMixin:
                 "texto": "VOLVER",
                 "archivo": "boton_volver.png",
                 "accion": lambda: controladores.Mostrar_seccion(self, mostrar),
-                "lado": 0.25
+                "lado": 0.32
             },
             {
                 "texto": "CONFIRMAR",
                 "archivo": "boton_confirmar.png", # Asegúrate que este nombre sea correcto en tu carpeta
                 "accion": accion_confirmar,
-                "lado": 0.75
+                "lado": 0.72
             }
         ]
         
