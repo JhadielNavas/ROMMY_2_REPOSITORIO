@@ -91,8 +91,8 @@ class MenuInstruccionesMixin:
         Args:
             menu_instrucciones: Instancia del menú donde agregar los controles
         """
-        x = (constantes.ANCHO_MENU_INSTRUCCIONES - constantes.ELEMENTO_PEQUENO_ANCHO) / 1.69
-        y = constantes.ALTO_MENU_INSTRUCCIONES - constantes.ELEMENTO_PEQUENO_ALTO * 0.8
+        x = (constantes.ANCHO_MENU_INSTRUCCIONES - constantes.ELEMENTO_PEQUENO_ANCHO) / 1.67
+        y = constantes.ALTO_MENU_INSTRUCCIONES - constantes.ELEMENTO_PEQUENO_ALTO * 0.51
         ancho = constantes.ELEMENTO_PEQUENO_ANCHO
         alto = constantes.ELEMENTO_PEQUENO_ALTO
         accion = lambda: controladores.Mostrar_seccion(self, self.menu_inicio,solo_ocultar=solo_ocultar)

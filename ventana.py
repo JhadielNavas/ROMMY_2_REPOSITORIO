@@ -305,10 +305,15 @@ class Ventana(
                 # actualizar borde para reflejar estado ON/OFF
                 try:
                     if self.master_volume == 1:
-                        boton.color_borde = constantes.ELEMENTO_CLICADO_PRINCIPAL
+                        # Sonido encendido: luz roja activa
+                        boton.grosor_borde = 50
+                        boton.color_borde = (200, 20, 60)
+                        boton.color_borde_actual = (255, 50, 50)
                     else:
-                        boton.color_borde = constantes.GRIS
-                    boton.color_borde_actual = boton.color_borde
+                        # Sonido apagado: sin luz
+                        boton.grosor_borde = 10
+                        boton.color_borde = None
+                        boton.color_borde_actual = None
                 except Exception:
                     pass
             except Exception as e:
@@ -342,6 +347,13 @@ class Ventana(
 
             boton.superficie_texto = img
             boton.rect_texto = img.get_rect(center=boton.rect.center)
+            # Configuración del borde indicador
+            boton.grosor_borde = 20
+            boton.radio_borde = 6
+
+            # Color rojo brillante cuando el sonido está activo
+            boton.color_borde = (220, 20, 60)
+            boton.color_borde_actual = boton.color_borde
 
         except Exception as e:
             print(f"No se pudo cargar imagen boton_volumen.png: {e}")
