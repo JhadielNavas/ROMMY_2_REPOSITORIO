@@ -99,7 +99,7 @@ class MenuNombreUsuarioMixin:
         # Entrada de texto dentro de la zona roja
         menu_nombre_usuario.crear_elemento(
             Clase=EntradaTexto,
-            x=815,
+            x=480,
             y=470,
             un_juego=self,
             limite_caracteres=20,
