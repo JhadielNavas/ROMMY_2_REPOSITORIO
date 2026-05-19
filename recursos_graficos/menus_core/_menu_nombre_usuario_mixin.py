@@ -51,15 +51,15 @@ class MenuNombreUsuarioMixin:
 
             panel = pygame.image.load(ruta_panel).convert_alpha()
             # Tamaño deseado de la imagen
-            ancho_panel = 1200
-            alto_panel = 900
+            ancho_panel = 800
+            alto_panel = 600
 
             # Escalar la imagen
             panel = pygame.transform.smoothscale(panel, (ancho_panel, alto_panel))
 
             # Calcular posición centrada
-            x_panel = (ancho_menu - ancho_panel) // 2 + 329
-            y_panel = (alto_menu - alto_panel) // 2 + 50
+            x_panel = (ancho_menu - ancho_panel) // 2 + 25
+            y_panel = (alto_menu - alto_panel) // 2 - 100
 
             # Agregar imagen centrada
             menu_nombre_usuario.agregar_imagen(panel, (x_panel, y_panel), 1)
@@ -79,13 +79,13 @@ class MenuNombreUsuarioMixin:
         # Título dentro de la parte blanca de la imagen
         menu_nombre_usuario.crear_elemento(
             Clase=Elemento_texto,
-            x=600,
-            y=170,
+            x=293,
+            y=110,
             un_juego=self,
             texto="INGRESE SU NOMBRE",
             ancho=660,
             alto=120,
-            tamaño_fuente=60,
+            tamaño_fuente=50,
             fuente=constantes.FUENTE_TITULO,
             color=None,
             radio_borde=0,
@@ -99,14 +99,14 @@ class MenuNombreUsuarioMixin:
         # Entrada de texto dentro de la zona roja
         menu_nombre_usuario.crear_elemento(
             Clase=EntradaTexto,
-            x=480,
-            y=470,
+            x=335,
+            y=315,
             un_juego=self,
             limite_caracteres=20,
             texto="nombre",
             ancho=660,
             alto=100,
-            tamaño_fuente=60,
+            tamaño_fuente=55,
             fuente=constantes.FUENTE_ESTANDAR,
             color=None,
             radio_borde=0,
@@ -213,9 +213,7 @@ class MenuNombreUsuarioMixin:
         """
         import pygame
         from logica_interfaz.archivo_de_importaciones import importar_desde_carpeta
-        
-        # 1. Definir alto fijo para simetría profesional
-        ALTO_FIJO_BOTONES = 115 
+         
         
         if not creador_sala:
             mostrar = self.menu_inicio
@@ -224,26 +222,51 @@ class MenuNombreUsuarioMixin:
             mostrar = self.menu_Cantidad_Jugadores
             accion_confirmar = lambda: controladores.validar_y_crear_servidor(self, menu_nombre_usuario)
 
-        # Configuración de los botones
-        datos_botones = [
-            {
-                "texto": "VOLVER",
-                "archivo": "boton_volver.png",
-                "accion": lambda: controladores.Mostrar_seccion(self, mostrar),
-                "lado": 0.32
-            },
-            {
-                "texto": "CONFIRMAR",
-                "archivo": "boton_confirmar.png", # Asegúrate que este nombre sea correcto en tu carpeta
-                "accion": accion_confirmar,
-                "lado": 0.72
-            }
-        ]
+        # Configuración diferente para cada pantalla
+        if creador_sala:
+            # BOTONES DE CREAR SALA
+            ALTO_FIJO_BOTONES = 88
+            y_factor = 0.95
+
+            datos_botones = [
+                {
+                    "texto": "VOLVER",
+                    "archivo": "boton_volver.png",
+                    "accion": lambda: controladores.Mostrar_seccion(self, mostrar),
+                    "lado": 0.295
+                },
+                {
+                    "texto": "CONFIRMAR",
+                    "archivo": "boton_confirmar.png",
+                    "accion": accion_confirmar,
+                    "lado": 0.715
+                }
+            ]
+        else:
+            # BOTONES DE UNIRSE A SALA
+            ALTO_FIJO_BOTONES = 88
+            y_factor = 0.85
+
+            datos_botones = [
+                {
+                    "texto": "VOLVER",
+                    "archivo": "boton_volver.png",
+                    "accion": lambda: controladores.Mostrar_seccion(self, mostrar),
+                    "lado": 0.32
+                },
+                {
+                    "texto": "CONFIRMAR",
+                    "archivo": "boton_confirmar.png",
+                    "accion": accion_confirmar,
+                    "lado": 0.73
+                }
+            
+            ]
         
         for datos in datos_botones:
             # 2. Crear el botón base (esqueleto)
             ancho_base = constantes.ELEMENTO_MEDIANO_ANCHO
-            y_base = (constantes.ALTO_MENU_NOM_USUARIO - constantes.ELEMENTO_MEDIANO_ALTO) * 0.85
+            y_base = (constantes.ALTO_MENU_NOM_USUARIO - constantes.ELEMENTO_MEDIANO_ALTO) * y_factor
             x_relativa = (constantes.ANCHO_MENU_NOM_USUARIO - ancho_base) * datos["lado"]
             
             boton = menu_nombre_usuario.crear_elemento(

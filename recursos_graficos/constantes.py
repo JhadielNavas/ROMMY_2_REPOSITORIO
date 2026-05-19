@@ -108,20 +108,20 @@ ANCHO_MENU_INSTRUCCIONES = ANCHO_VENTANA*0.95
 ALTO_MENU_INSTRUCCIONES = ALTO_VENTANA*0.95
 TEXTO_DE_INSTRUCCIONES = """
 
-OBJETIVO DEL JUEGO
+OBJETIVO DEL JUEGO:
 ────────────────────────────
 El último jugador en acumular menos de 500 puntos gana la partida.
 El primer jugador en alcanzar o superar los 500 puntos es eliminado.
 
 
-REGLAS GENERALES
+REGLAS GENERALES:
 ────────────────────────────
 1. En cada turno, puedes robar una carta del mazo o del descarte.
 2. Puedes robar fuera de tu turno (COMPRA), pero debes tomar una carta extra como penalización.
 3. El objetivo es formar combinaciones para bajarse.
 
 
-TIPOS DE JUGADAS
+TIPOS DE JUGADAS:
 ────────────────────────────
 • TRÍOS:
   - Mínimo 3 cartas del mismo valor
@@ -133,7 +133,7 @@ TIPOS DE JUGADAS
   - No se permiten dos Jokers juntos
 
 
-RONDA Y PROGRESIÓN
+RONDA Y PROGRESIÓN:
 ────────────────────────────
 Cada partida consta de 4 rondas:
 
@@ -143,7 +143,7 @@ RONDA 3 = 3 TRÍOS
 RONDA 4 = 1 SEGUIDILLA + 2 TRÍOS (RONDA COMPLETA)
 
 
-FINAL DE RONDA
+FINAL DE RONDA:
 ────────────────────────────
 Cada ronda termina cuando un jugador logra bajarse completamente.
 
@@ -151,7 +151,7 @@ Al finalizar:
 • Los jugadores suman los puntos de las cartas restantes en su mano.
 
 
-CONDICIÓN ESPECIAL FINAL
+CONDICIÓN ESPECIAL FINAL:
 ────────────────────────────
 En la ronda 4, el jugador debe bajar TODAS sus cartas en un solo turno,
 incluyendo el descarte final (10 cartas en total).

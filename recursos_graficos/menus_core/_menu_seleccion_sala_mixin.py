@@ -140,7 +140,7 @@ class MenuSeleccionSalaMixin:
         """
         # 1. Definir un alto fijo para ambos botones en píxeles
         # Prueba con 120 para ver cuál se ajusta mejor a tu diseño
-        ALTO_FIJO_BOTONES = 120 
+        ALTO_FIJO_BOTONES = 85 
 
         # Configuración de posiciones relativas
         y_relativa = (constantes.ALTO_MENU_SELECCION_SALA - constantes.ELEMENTO_MEDIANO_ALTO) * 0.9
@@ -151,8 +151,8 @@ class MenuSeleccionSalaMixin:
                 "texto": "VOLVER",
                 "archivo": "boton_volver.png",
                 "accion": lambda: controladores.Mostrar_seccion(self, self.menu_nombre_usuario),
-                "x_inc": 0.554,
-                "y_inc": 1
+                "x_inc": 0.539,
+                "y_inc": 1.05
             },
             {
                 "texto": "ACTUALIZAR",

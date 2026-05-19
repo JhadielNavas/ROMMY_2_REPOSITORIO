@@ -135,7 +135,7 @@ class MenuCantidadJugadoresMixin:
             posicion_y: Posición Y de referencia
         """
         # 1. Definir alto fijo para que ambos botones sean iguales
-        ALTO_FIJO_BOTONES = 120 
+        ALTO_FIJO_BOTONES = 90
         
         # Posición vertical base
         y_base = (constantes.ALTO_MENU_CNT_J - constantes.ELEMENTO_MEDIANO_ALTO) * (posicion_y + 0.5)
@@ -145,13 +145,13 @@ class MenuCantidadJugadoresMixin:
                 "texto": "VOLVER",
                 "archivo": "boton_volver.png",
                 "accion": lambda: controladores.Mostrar_seccion(self, self.menu_inicio),
-                "lado": 0.2
+                "lado": 0.25
             },
             {
                 "texto": "CONFIRMAR",
                 "archivo": "boton_confirmar.png", 
                 "accion": lambda: controladores.mostrar_menu_nombre_usuario(self, True),
-                "lado": 0.8
+                "lado": 0.75
             }
         ]
 
@@ -159,7 +159,7 @@ class MenuCantidadJugadoresMixin:
             # 2. Crear el botón base
             ancho_base = constantes.ELEMENTO_MEDIANO_ANCHO
             alto_base = constantes.ELEMENTO_MEDIANO_ALTO
-            x_relativa = (constantes.ANCHO_MENU_CNT_J - ancho_base) * datos["lado"]
+            x_relativa = (constantes.ANCHO_MENU_CNT_J - ancho_base) * datos["lado"] 
             
             boton = menu_cantidad.crear_elemento(
                 x=x_relativa,
