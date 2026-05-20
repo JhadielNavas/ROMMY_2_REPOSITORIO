@@ -183,6 +183,42 @@ class MenuNombreUsuarioMixin:
             elif clase == EntradaTexto:
                 permitir_espacios = False
                 permitir_numeros = False
+
+                # Cargar imagen del bloque de texto
+                ruta_bloque = importar_desde_carpeta(
+                    nombre_archivo="Imagenes/botones/bloque_texto.png",
+                    nombre_carpeta="assets"
+                )
+
+                img_bloque = pygame.image.load(ruta_bloque).convert_alpha()
+                img_bloque = pygame.transform.smoothscale(img_bloque, (int(ancho), int(alto)))
+
+                # Color blanco semitransparente (RGBA)
+                color_linea = (255, 255, 255, 220)
+
+                # Margen izquierdo y derecho
+                margen_x = 40
+
+                # Posición vertical de la línea (cerca de la parte inferior)
+                y_linea = int(alto * 0.72)
+
+                # Grosor de la línea
+                grosor = 4
+
+                # Dibujar línea horizontal principal
+                pygame.draw.line(
+                    img_bloque,
+                    color_linea,
+                    (margen_x, y_linea),
+                    (int(ancho) - margen_x, y_linea),
+                    grosor
+                )
+
+                # Insertar imagen detrás del input
+                menu_nombre_usuario.imagenes.append(
+                    (img_bloque, (menu_nombre_usuario.x + x, menu_nombre_usuario.y + y))
+                )
+
                 menu_nombre_usuario.crear_elemento(
                     Clase=clase,
                     x=x,
@@ -192,10 +228,10 @@ class MenuNombreUsuarioMixin:
                     texto=texto,
                     ancho=ancho,
                     alto=alto,
-                    tamaño_fuente=constantes.F_MEDIANA,
+                    tamaño_fuente=55,
                     fuente=constantes.FUENTE_ESTANDAR,
-                    color=constantes.ELEMENTO_FONDO_PRINCIPAL,
-                    radio_borde=constantes.REDONDEO_NORMAL,
+                    color=None,
+                    radio_borde=0,
                     color_texto=constantes.COLOR_TEXTO_PRINCIPAL,
                     grupo=grupos_elementos_entrada,
                     permitir_espacios=permitir_espacios,
@@ -203,6 +239,8 @@ class MenuNombreUsuarioMixin:
                     permitir_especiales=False,
                     cartel_alerta=self.cartel_alerta
                 )
+
+                
     
     def crear_elementos_control_usuario(self, menu_nombre_usuario, creador_sala):
         """Crea botones VOLVER y CONFIRMAR con imágenes personalizadas y escala simétrica
@@ -233,13 +271,13 @@ class MenuNombreUsuarioMixin:
                     "texto": "VOLVER",
                     "archivo": "boton_volver.png",
                     "accion": lambda: controladores.Mostrar_seccion(self, mostrar),
-                    "lado": 0.295
+                    "lado": 0.299
                 },
                 {
                     "texto": "CONFIRMAR",
                     "archivo": "boton_confirmar.png",
                     "accion": accion_confirmar,
-                    "lado": 0.715
+                    "lado": 0.70
                 }
             ]
         else:

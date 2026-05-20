@@ -644,6 +644,7 @@ class EntradaTexto(BotonRadio):
     def dibujar(self):
         self.actualizar()
         super().dibujar()
+
         if self.seleccionado and self.mostrar_cursor:
             if self.valor:  # Solo si hay texto
                 ancho_texto_parcial = self.fuente.render(self.valor[:self.pos_cursor], True, self.color_texto).get_width()
@@ -652,9 +653,14 @@ class EntradaTexto(BotonRadio):
             
             x_texto_inicial = self.rect_texto.x
             x_cursor = x_texto_inicial + ancho_texto_parcial
-            y_inicio = self.rect.y + 5
-            y_fin = self.rect.y + self.rect.height - 5
-            pygame.draw.line(self.pantalla, self.color_texto, (x_cursor, y_inicio), (x_cursor, y_fin), 2)
+
+            altura_cursor = 30 
+
+            # Centrado vertical
+            y_inicio = self.rect.y + (self.rect.height - altura_cursor) // 2
+            y_fin = y_inicio + altura_cursor
+
+            pygame.draw.line(self.pantalla, self.color_texto, (x_cursor, y_inicio), (x_cursor, y_fin), 1)
     def verificar_hover(self, posicion_raton):
         return super().verificar_hover(posicion_raton)
 class CartelAlerta:
