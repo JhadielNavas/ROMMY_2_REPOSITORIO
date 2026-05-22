@@ -51,6 +51,11 @@ class MenuCantidadJugadoresMixin:
         alto_seleccion = constantes.ELEMENTO_MEDIANO_ALTO * 0.95
         x_seleccion = (constantes.ANCHO_MENU_CNT_J - ancho_seleccion) * (0.5)
         y_seleccion = (constantes.ALTO_MENU_CNT_J - alto_seleccion) * (0.10)
+
+        # subrayado
+        x = 299
+        y = 10
+        ancho = 600
         
         menu_cantidad.crear_elemento(
             Clase=Elemento_texto,
@@ -69,6 +74,31 @@ class MenuCantidadJugadoresMixin:
             color_borde=None, # Quitamos el color del borde
             grosor_borde=0, # Ponemos el grosor del borde en 0
             # --------------------
+        )
+
+        # SUBRAYADO
+        ruta_subrayado = importar_desde_carpeta(
+            nombre_archivo="Imagenes/botones/subrayado_4.png",
+            nombre_carpeta="assets"
+        )
+
+        img_subrayado = pygame.image.load(ruta_subrayado).convert_alpha()
+
+        ancho_subrayado = 1100
+        alto_subrayado = 290
+
+        img_subrayado = pygame.transform.smoothscale(
+            img_subrayado,
+            (ancho_subrayado, alto_subrayado)
+        )
+
+        x_subrayado = x + (ancho - ancho_subrayado) // 2
+        y_subrayado = y + 6
+
+        menu_cantidad.agregar_imagen(
+            img_subrayado,
+            (x_subrayado, y_subrayado),
+            1
         )
 
         # Radio buttons con imágenes de cartas en layout horizontal
@@ -90,8 +120,8 @@ class MenuCantidadJugadoresMixin:
         # Centrar horizontalmente los 3 botones
         for i, (nombre_carta, num_jugadores) in enumerate(cartas_config):
             # Posición horizontal centrada
-            posicion_x = 0.25 + (i * (1.2 / (num_botones - 1)))
-            posicion_y = 0.45  # Posición vertical centrada
+            posicion_x = 0.293 + (i * (1.2 / (num_botones - 1)))
+            posicion_y = 0.55  # Posición vertical centrada
             
             # Cargar la imagen de la carta
             ruta_carta = importar_desde_carpeta(
@@ -135,23 +165,23 @@ class MenuCantidadJugadoresMixin:
             posicion_y: Posición Y de referencia
         """
         # 1. Definir alto fijo para que ambos botones sean iguales
-        ALTO_FIJO_BOTONES = 90
+        ALTO_FIJO_BOTONES = 80
         
         # Posición vertical base
-        y_base = (constantes.ALTO_MENU_CNT_J - constantes.ELEMENTO_MEDIANO_ALTO) * (posicion_y + 0.5)
+        y_base = (constantes.ALTO_MENU_CNT_J - constantes.ELEMENTO_MEDIANO_ALTO) * (posicion_y + 0.43)
 
         datos_botones = [
             {
                 "texto": "VOLVER",
                 "archivo": "boton_volver.png",
                 "accion": lambda: controladores.Mostrar_seccion(self, self.menu_inicio),
-                "lado": 0.25
+                "lado": 0.29
             },
             {
                 "texto": "CONFIRMAR",
                 "archivo": "boton_confirmar.png", 
                 "accion": lambda: controladores.mostrar_menu_nombre_usuario(self, True),
-                "lado": 0.75
+                "lado": 0.72
             }
         ]
 

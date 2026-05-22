@@ -76,6 +76,59 @@ class MenuNombreUsuarioMixin:
     def crear_elementos_unirse(self, menu_nombre_usuario, ancho_menu, alto_menu):
         """Diseño personalizado para UNIRSE A LA SALA con imagen caja_servidor."""
 
+        # Borde izquierdo
+        ruta_borde_izq = importar_desde_carpeta(
+            nombre_archivo="Imagenes/botones/borde_1_izquierda.png",
+            nombre_carpeta="assets"
+        )
+
+        img_borde_izq = pygame.image.load(ruta_borde_izq).convert_alpha()
+
+        ancho_borde_izq = 180
+        alto_borde_izq = 120
+
+        img_borde_izq = pygame.transform.smoothscale(
+            img_borde_izq,
+            (ancho_borde_izq, alto_borde_izq)
+        )
+
+        x_borde_izq = 325
+        y_borde_izq = 95
+
+        menu_nombre_usuario.agregar_imagen(
+            img_borde_izq,
+            (x_borde_izq, y_borde_izq),
+            1
+        )
+
+
+        # Borde derecho
+        ruta_borde_der = importar_desde_carpeta(
+            nombre_archivo="Imagenes/botones/borde_1_derecha.png",
+            nombre_carpeta="assets"
+        )
+
+        img_borde_der = pygame.image.load(ruta_borde_der).convert_alpha()
+
+        ancho_borde_der = 180
+        alto_borde_der = 120
+
+        img_borde_der = pygame.transform.smoothscale(
+            img_borde_der,
+            (ancho_borde_der, alto_borde_der)
+        )
+
+        x_borde_der = 745
+        y_borde_der = 116
+
+        menu_nombre_usuario.agregar_imagen(
+            img_borde_der,
+            (x_borde_der, y_borde_der),
+            1
+        )
+
+
+
         # Título dentro de la parte blanca de la imagen
         menu_nombre_usuario.crear_elemento(
             Clase=Elemento_texto,
@@ -95,6 +148,8 @@ class MenuNombreUsuarioMixin:
             alineacion="centro",
             alineacion_vertical="centro"
         )
+
+
 
         # Entrada de texto dentro de la zona roja
         menu_nombre_usuario.crear_elemento(
@@ -180,6 +235,37 @@ class MenuNombreUsuarioMixin:
                     color_borde= None,
                     grosor_borde= 0,
                 )
+
+                # Subrayado SOLO para los títulos
+                if texto in ("DATOS DE LA PARTIDA Y USUARIO", "INGRESA TU NOMBRE", "NOMBRE DE LA SALA"):
+                    ruta_subrayado = importar_desde_carpeta(
+                        nombre_archivo="Imagenes/botones/subrayado_2.png",
+                        nombre_carpeta="assets"
+                    )
+
+                    img_subrayado = pygame.image.load(ruta_subrayado).convert_alpha()
+
+                    ancho_subrayado = int(ancho * 0.93)
+                    alto_subrayado = 110
+
+                    img_subrayado = pygame.transform.smoothscale(
+                        img_subrayado,
+                        (ancho_subrayado, alto_subrayado)
+                    )
+
+                    x_subrayado = x + (ancho - ancho_subrayado) // 2
+                    y_subrayado = y + alto * 0.25
+
+                    menu_nombre_usuario.imagenes.append(
+                        (
+                            img_subrayado,
+                            (
+                                menu_nombre_usuario.x + x_subrayado,
+                                menu_nombre_usuario.y + y_subrayado
+                            )
+                        )
+                    )
+
             elif clase == EntradaTexto:
                 permitir_espacios = False
                 permitir_numeros = False
