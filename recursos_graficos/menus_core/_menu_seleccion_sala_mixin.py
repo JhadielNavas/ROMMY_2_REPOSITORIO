@@ -151,15 +151,15 @@ class MenuSeleccionSalaMixin:
                 "texto": "VOLVER",
                 "archivo": "boton_volver.png",
                 "accion": lambda: controladores.Mostrar_seccion(self, self.menu_nombre_usuario),
-                "x_inc": 0.539,
+                "x_inc": 0.35,
                 "y_inc": 1.05
             },
             {
                 "texto": "ACTUALIZAR",
                 "archivo": "boton_actualizar.png", 
                 "accion": lambda: self.actualizar_lista_salas(),
-                "x_inc": 1.2,
-                "y_inc": 0.1
+                "x_inc": 0.75,
+                "y_inc": 1
             }
         ]
 
