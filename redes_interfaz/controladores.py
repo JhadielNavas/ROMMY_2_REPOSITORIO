@@ -451,6 +451,20 @@ def mostrar_mesa(un_juego,clase_mesa_interfaz,datos):
     except Exception:
         pass
 
+    # Mostrar la sección de la mesa
+    try:
+        clase_mesa_interfaz.determinar_turno()
+
+        if clase_mesa_interfaz.tu_turno:
+            print("ACTIVANDO MANO - es mi turno")
+            clase_mesa_interfaz.actualizar_estado_mano("activar_mano")
+        else:
+            print("DESACTIVANDO MANO - no es mi turno")
+            clase_mesa_interfaz.actualizar_estado_mano("desactivar_mano")
+
+    except Exception as e:
+        print(f"Error actualizando estado de mano por turno: {e}")
+
     Mostrar_seccion(un_juego, un_juego.mesa)
     # Reproducir música de partida al mostrar la mesa
     try:

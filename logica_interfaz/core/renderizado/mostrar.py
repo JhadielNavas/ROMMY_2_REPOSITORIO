@@ -23,7 +23,7 @@ class MostrarMixin:
         cantidad_jugadores = len(self.lista_jugadores_objetos)
         tipo_posiciones = "pocos_jugadores" if cantidad_jugadores < 5 else "muchos_jugadores"
 
-        posiciones_base = self.posiciones_por_cantidad[tipo_posiciones]
+        posiciones_base = self.posiciones_por_cantidad[cantidad_jugadores]
         indices = self.permutaciones_por_jugador[cantidad_jugadores][self.elementos_mesa["id_jugador"]]
         posiciones = [posiciones_base[i] for i in indices]
 
@@ -47,6 +47,9 @@ class MostrarMixin:
             else:
                 self.agregar_mi_mano(mesa, mano_jugador_i, escala, dx, dy, x, y)
             self.mostrar_contador_de_cartas_manos(mesa)
+        # DEBUG: dibujar posiciones simuladas de 7 jugadores
+        if getattr(self, "debug_ver_posiciones_7", False):
+            self.dibujar_debug_posiciones_jugadores(6)
 
     def agregar_manos_jugadores(self, mesa, cantidad_cartas, jugador, escala, dx, dy, x, y):
         """Agrega las cartas de otros jugadores (reverso)"""

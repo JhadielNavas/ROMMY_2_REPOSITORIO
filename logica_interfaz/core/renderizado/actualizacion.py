@@ -338,15 +338,13 @@ class ActualizacionMixin:
                 self.botones_accion["no_comprar"].deshabilitado = True
                 self.botones_accion["no_comprar"].deshabilitar()
         if accion == "activar_mano":
-            mis_cartas = []
             for carta in self.referencia_elementos["elementos_mis_cartas"]:
                 carta.deshabilitado = False
                 carta.seleccionado = False
-                mis_cartas.append(carta)
+                
+
         if accion == "desactivar_mano":
-            mis_cartas = []
             for carta in self.referencia_elementos["elementos_mis_cartas"]:
                 carta.deshabilitado = True
                 carta.seleccionado = False
-                mis_cartas.append(carta)
 

@@ -427,6 +427,23 @@ class Ventana(
             except Exception:
                 self.last_key_time = None
 
+            # ===== DEBUG POSICIONES JUGADORES =====
+            if evento.key == pygame.K_F7:
+                print("F7 presionado")
+                if hasattr(self, "mesa_juego") and self.mesa_juego:
+                    self.mesa_juego.debug_ver_posiciones_7 = not getattr(
+                        self.mesa_juego,
+                        "debug_ver_posiciones_7",
+                        False
+                    )
+
+                    print(
+                        "DEBUG posiciones 7:",
+                        self.mesa_juego.debug_ver_posiciones_7
+                    )
+                else:
+                    print("No existe self.mesa")
+
     def ejecutar_verificacion_hovers(self, posicion_raton):
         self.cartel_alerta.verificar_hover(posicion_raton)
         self.boton_jugar.verificar_hover(posicion_raton)
@@ -523,7 +540,7 @@ class Ventana(
            self.pantalla.blit(self.img_fondo_menus, (0, 0))
         if hasattr(self, 'menu_inicio') and self.menu_inicio:
             self.menu_inicio.dibujar_menu()
-        
+
         # Mantenemos el resto de tu estructura original
         self.boton_jugar.dibujar()
         
@@ -546,6 +563,14 @@ class Ventana(
         if hasattr(self, 'mesa') and self.mesa and hasattr(self.mesa, 'menus_activos'):
             for menu in self.mesa.menus_activos:
                 menu.dibujar_menu()
+
+        # DEBUG: dibujar posiciones simuladas de 7 jugadores
+        try:
+            if hasattr(self, "mesa_juego") and self.mesa_juego:
+                if getattr(self.mesa_juego, "debug_ver_posiciones_7", False):
+                    self.mesa_juego.dibujar_debug_posiciones_jugadores(6)
+        except Exception as e:
+            print(f"Error debug posiciones 7: {e}")
 
         self.cartel_alerta.dibujar()
         

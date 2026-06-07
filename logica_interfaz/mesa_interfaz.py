@@ -71,6 +71,7 @@ class Mesa_interfaz(
     _cartas_imagenes = None  # cache estático
 
     def __init__(self, un_juego):
+
         # Inicialización de datos del juego interfaz-redes
         self.elementos_mesa = {
             "id_jugador": None,
@@ -103,6 +104,8 @@ class Mesa_interfaz(
         self.jugada = []
         self.trio = []
         self.seguidilla = []
+
+        self.debug_ver_posiciones_7 = False #simulacion de 7 jugadores momentaneos
 
         # Estados del juego
         self.tu_turno = False
@@ -149,32 +152,135 @@ class Mesa_interfaz(
     def _inicializar_configuracion_posiciones(self):
         """Configura las posiciones y permutaciones para los jugadores"""
         self.posiciones_por_cantidad = {
-            "pocos_jugadores": [
-                ("abajo", 0.5), ("derecha", 0.6), ("arriba", 0.5), ("izquierda", 0.6)
+            2: [
+                ("abajo", 0.50),
+                ("arriba", 0.50),
             ],
-            "muchos_jugadores": [
-                ("abajo", 0.5),      # 0: abajo-enmedio
-                ("abajo", 0.25),     # 1: abajo-izquierda
-                ("abajo", 0.85),     # 2: abajo-derecha
-                ("derecha", 0.9),    # 3: derecha-abajo
-                ("derecha", 0.4),    # 4: derecha-enmedio
-                ("arriba", 0.65),    # 5: arriba-derecha
-                ("arriba", 0.5),     # 6: arriba-enmedio
-                ("arriba", 0.25),    # 7: arriba-izquierda
-                ("izquierda", 0.4),  # 8: izquierda-enmedio
-                ("izquierda", 0.9)   # 9: izquierda-abajo
-            ]
+
+            3: [
+                ("abajo", 0.50),
+                ("derecha", 0.50),
+                ("izquierda", 0.50),
+            ],
+
+            4: [
+                ("abajo", 0.50),
+                ("derecha", 0.50),
+                ("arriba", 0.50),
+                ("izquierda", 0.50),
+            ],
+
+            5: [
+                ("abajo", 0.30),
+                ("abajo", 0.65),
+                ("derecha", 0.50),
+                ("arriba", 0.50),
+                ("izquierda", 0.50),
+            ],
+
+            6: [
+                ("abajo", 0.50),
+                ("derecha", 0.70),
+                ("derecha", 0.35),
+                ("arriba", 0.50),
+                ("izquierda", 0.35),
+                ("izquierda", 0.70),
+            ],
+
+            7: [
+                ("abajo", 0.50),
+                ("derecha", 0.85),
+                ("derecha", 0.50),
+                ("arriba", 0.80),
+                ("arriba", 0.20),
+                ("izquierda", 0.50),
+                ("izquierda", 0.85),
+            ],
+
+            8: [
+                ("abajo", 0.50),
+                ("derecha", 0.85),
+                ("derecha", 0.50),
+                ("arriba", 0.80),
+                ("arriba", 0.20),
+                ("izquierda", 0.50),
+                ("izquierda", 0.85),
+                ("arriba", 0.50),
+            ],
         }
 
         self.permutaciones_por_jugador = {
-            2: {1: [0, 2], 2: [2, 0]},
-            3: {1: [0, 1, 2], 2: [3, 0, 1], 3: [2, 3, 0]},
-            4: {1: [0, 1, 2, 3], 2: [3, 0, 1, 2], 3: [2, 3, 0, 1], 4: [1, 2, 3, 0]},
+            2: {
+                1: [0, 1],
+                2: [1, 0],
+            },
+
+            3: {
+                1: [0, 1, 2],
+                2: [2, 0, 1],
+                3: [1, 2, 0],
+            },
+
+            4: {
+                1: [0, 1, 2, 3],
+                2: [3, 0, 1, 2],
+                3: [2, 3, 0, 1],
+                4: [1, 2, 3, 0],
+            },
+
             5: {
-                1: [0, 4, 5, 7, 8],
-                2: [8, 0, 3, 4, 6],
-                3: [6, 8, 1, 2, 4],
-                4: [6, 8, 1, 2, 4],
-                5: [4, 6, 8, 9, 0]
-            }
+                1: [0, 1, 2, 3, 4],
+                2: [4, 0, 1, 2, 3],
+                3: [3, 4, 0, 1, 2],
+                4: [2, 3, 4, 0, 1],
+                5: [1, 2, 3, 4, 0],
+            },
+
+            6: {
+                1: [0, 1, 2, 3, 4, 5],
+                2: [5, 0, 1, 2, 3, 4],
+                3: [4, 5, 0, 1, 2, 3],
+                4: [3, 4, 5, 0, 1, 2],
+                5: [2, 3, 4, 5, 0, 1],
+                6: [1, 2, 3, 4, 5, 0],
+            },
+
+            7: {
+                1: [0, 1, 2, 3, 4, 5, 6],
+                2: [6, 0, 1, 2, 3, 4, 5],
+                3: [5, 6, 0, 1, 2, 3, 4],
+                4: [4, 5, 6, 0, 1, 2, 3],
+                5: [3, 4, 5, 6, 0, 1, 2],
+                6: [2, 3, 4, 5, 6, 0, 1],
+                7: [1, 2, 3, 4, 5, 6, 0],
+            },
         }
+
+    def dibujar_debug_posiciones_jugadores(self, cantidad = 7):
+            ancho = constantes.ANCHO_VENTANA
+            alto = constantes.ALTO_VENTANA
+
+            posiciones = self.posiciones_por_cantidad[cantidad]
+
+            for i, (lado, factor) in enumerate(posiciones):
+                if lado == "abajo":
+                    x = int(ancho * factor)
+                    y = int(alto * 0.82)
+                elif lado == "arriba":
+                    x = int(ancho * factor)
+                    y = int(alto * 0.08)
+                elif lado == "derecha":
+                    x = int(ancho * 0.88)
+                    y = int(alto * factor)
+                elif lado == "izquierda":
+                    x = int(ancho * 0.08)
+                    y = int(alto * factor)
+
+                rect = pygame.Rect(x - 60, y - 35, 120, 70)
+
+                pygame.draw.rect(self.un_juego.pantalla, (255, 255, 255), rect, 2)
+                pygame.draw.circle(self.un_juego.pantalla, (255, 0, 0), (x, y), 6)
+
+                fuente = pygame.font.SysFont(None, 28)
+                texto = fuente.render(f"J{i+1} {lado} {factor}", True, (255, 255, 255))
+                self.un_juego.pantalla.blit(texto, (x - 55, y - 10))     

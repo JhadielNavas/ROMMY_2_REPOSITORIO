@@ -19,9 +19,14 @@ class MenuOpcionesMixin:
         x = constantes.ANCHO_MENU_MESA - ancho_boton - 5
         y = 10
         
+        ruta_menu = importar_desde_carpeta(
+            nombre_archivo="Imagenes/botones/menu.png",
+            nombre_carpeta="assets"
+        )
+
         # 1. Cargar la imagen que subiste
         # Asegúrate de que el archivo .jpg esté en la carpeta principal
-        imagen_aux = pygame.image.load("./assets/Imagenes/botones/menu.png")
+        imagen_aux = pygame.image.load(ruta_menu).convert_alpha()
         
         # 2. Ajustarla al tamaño del botón
         imagen_final = pygame.transform.smoothscale(imagen_aux, (ancho_boton - 10, alto_boton - 10))
