@@ -568,7 +568,7 @@ class Ventana(
         try:
             if hasattr(self, "mesa_juego") and self.mesa_juego:
                 if getattr(self.mesa_juego, "debug_ver_posiciones_7", False):
-                    self.mesa_juego.dibujar_debug_posiciones_jugadores(6)
+                    self.mesa_juego.dibujar_debug_posiciones_jugadores(5)
         except Exception as e:
             print(f"Error debug posiciones 7: {e}")
 

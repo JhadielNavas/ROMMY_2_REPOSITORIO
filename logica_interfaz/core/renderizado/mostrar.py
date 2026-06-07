@@ -49,7 +49,7 @@ class MostrarMixin:
             self.mostrar_contador_de_cartas_manos(mesa)
         # DEBUG: dibujar posiciones simuladas de 7 jugadores
         if getattr(self, "debug_ver_posiciones_7", False):
-            self.dibujar_debug_posiciones_jugadores(6)
+            self.dibujar_debug_posiciones_jugadores(5)
 
     def agregar_manos_jugadores(self, mesa, cantidad_cartas, jugador, escala, dx, dy, x, y):
         """Agrega las cartas de otros jugadores (reverso)"""

@@ -171,30 +171,30 @@ class Mesa_interfaz(
             ],
 
             5: [
-                ("abajo", 0.30),
-                ("abajo", 0.65),
-                ("derecha", 0.50),
-                ("arriba", 0.50),
-                ("izquierda", 0.50),
+                ("abajo", 0.50),
+                ("arriba", 0.65),
+                ("derecha", 0.70),
+                ("arriba", 0.33),
+                ("izquierda", 0.70),
             ],
 
             6: [
                 ("abajo", 0.50),
-                ("derecha", 0.70),
-                ("derecha", 0.35),
+                ("derecha", 0.95),
+                ("derecha", 0.50),
                 ("arriba", 0.50),
-                ("izquierda", 0.35),
-                ("izquierda", 0.70),
+                ("izquierda", 0.50),
+                ("izquierda", 0.95),
             ],
 
             7: [
                 ("abajo", 0.50),
-                ("derecha", 0.85),
+                ("derecha", 0.95),
                 ("derecha", 0.50),
-                ("arriba", 0.80),
-                ("arriba", 0.20),
+                ("arriba", 0.65),
+                ("arriba", 0.33),
                 ("izquierda", 0.50),
-                ("izquierda", 0.85),
+                ("izquierda", 0.95),
             ],
 
             8: [
