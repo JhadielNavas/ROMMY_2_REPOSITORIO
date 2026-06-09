@@ -60,7 +60,9 @@ class Ventana(
             "ip_sala":"",
             "lista_jugadores": [],
             "nombre_unirse": "",
-            "salas_disponibles" : []
+            "salas_disponibles" : [],
+            "es_host": False,
+            "origen_espera": ""
         }
 
         self.elementos_creados = []
@@ -169,6 +171,9 @@ class Ventana(
 
     def reproducir_musica_menu(self):
         try:
+            if pygame.mixer.get_init() and pygame.mixer.music.get_busy():
+                return
+
             ruta = importar_desde_carpeta(
                 nombre_archivo="Audio/Main_menu.ogg",
                 nombre_carpeta="assets"
@@ -286,11 +291,11 @@ class Ventana(
     def crear_boton_silenciar(self):
         """Crea el botón de silenciar/activar música mostrado en el menú principal."""
         # Tamaño y posición: esquina inferior izquierda
-        tamaño = int(min(constantes.ANCHO_VENTANA, constantes.ALTO_VENTANA) * 0.06)  # tamaño relativo
+        tamaño = int(min(constantes.ANCHO_VENTANA, constantes.ALTO_VENTANA) * 0.065)  # tamaño relativo
         ancho = tamaño * 1.2
         alto = tamaño
-        x = 100
-        y = constantes.ALTO_VENTANA - alto - 60
+        x = 85
+        y = constantes.ALTO_VENTANA - alto - 58
 
         def accion():
             try:

@@ -49,6 +49,10 @@ class MenuMesaEsperaMixin:
         
         # Guardar referencia al elemento de texto para poder actualizarlo
         menu_mesa_espera.elemento_texto_espera = elemento_texto
+
+        #crear boton desconectar del servidor
+        self.crear_boton_regresar_mesa_espera(menu_mesa_espera)
+
         self.elementos_creados.append(menu_mesa_espera)
         return menu_mesa_espera
     
@@ -140,3 +144,45 @@ class MenuMesaEsperaMixin:
             self.menu_mesa_espera = self.Menu_mesa_espera()
             self.elementos_creados.append(self.menu_mesa_espera)
             controladores.Mostrar_seccion(self, self.menu_mesa_espera)
+
+    def crear_boton_regresar_mesa_espera(self, menu_mesa_espera):
+        ancho = 215
+        alto = 70
+
+        x = 70
+        y = 610
+
+        boton_regresar = menu_mesa_espera.crear_elemento(
+            x=x,
+            y=y,
+            funcion=True,
+            ancho=ancho,
+            alto=alto,
+            texto=" ",
+            accion=lambda: controladores.regresar_desde_mesa_espera(self),
+            tp_color="s",
+            tp_borde="n"
+        )
+
+        try:
+            ruta_img = importar_desde_carpeta(
+                nombre_archivo="Imagenes/botones/boton_regresar.png",
+                nombre_carpeta="assets"
+            )
+
+            img = pygame.image.load(ruta_img).convert_alpha()
+            img = pygame.transform.smoothscale(img, (ancho, alto))
+
+            boton_regresar.superficie_texto = img
+            boton_regresar.rect_texto = img.get_rect(center=boton_regresar.rect.center)
+
+            boton_regresar.color_actual = None
+            boton_regresar.color = None
+            boton_regresar.color_hover = None
+            boton_regresar.color_clicado = None
+            boton_regresar.grosor_borde = 0
+            boton_regresar.color_borde = None
+            boton_regresar.color_borde_actual = None
+
+        except Exception as e:
+            print(f"Error cargando boton_regresar.png: {e}")
