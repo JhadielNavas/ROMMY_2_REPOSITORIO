@@ -37,7 +37,12 @@ class MenuOpcionesMixin:
             y = 10
             
         # Cargar la imagen del menú
-        imagen_aux = pygame.image.load("./assets/Imagenes/botones/menu.png").convert_alpha()
+        ruta_menu = importar_desde_carpeta(
+            nombre_archivo="Imagenes/botones/menu.png",
+            nombre_carpeta="assets"
+        )
+
+        imagen_aux = pygame.image.load(ruta_menu).convert_alpha()
         
         # Escalar la imagen aprovechando el nuevo tamaño gigante
         rect_img = imagen_aux.get_rect()
