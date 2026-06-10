@@ -55,28 +55,24 @@ class OrdenamientoManoMixin:
             self.mano.sort(key=self._clave_carta)
 
         self._actualizar_texto_boton_orden()
-
+#cambio lismar
     def crear_boton_ordenar(self, mesa) -> None:
-        """
-        Crea el botón de ordenamiento y lo agrega al Menu de la mesa.
-        Se llama desde controladores.py justo después de mesa.crear_mesa().
-
-        Args:
-            mesa: objeto Menu de la mesa de juego.
-        """
+        """Crea el botón de ordenamiento vinotinto."""
         from recursos_graficos.elementos_de_interfaz_de_usuario import Boton
         from recursos_graficos import constantes
 
         ancho = int(constantes.ELEMENTO_PEQUENO_ANCHO * 0.52)
         alto  = int(constantes.ELEMENTO_PEQUENO_ALTO  * 0.52)
 
-        # Posición: esquina inferior izquierda, sobre la mano del jugador.
-        # Ajusta x/y si colisiona con otros botones del juego.
         x = int(constantes.ANCHO_VENTANA * 0.01)
         y = int(constantes.ALTO_VENTANA  * 0.875)
 
         def _accion_ordenar():
             self.ordenar_mano()
+
+        color_vinotinto = (128, 0, 32)
+        color_blanco = (255, 255, 255)
+        color_dorado = (218, 165, 32)
 
         boton = Boton(
             self.un_juego,
@@ -87,25 +83,21 @@ class OrdenamientoManoMixin:
             y,
             constantes.F_PEQUENA,
             constantes.FUENTE_ESTANDAR,
-            constantes.ELEMENTO_FONDO_PRINCIPAL,
+            color=color_vinotinto,                # Fondo vinotinto
             radio_borde         = constantes.REDONDEO_NORMAL // 2,
-            color_texto         = constantes.COLOR_TEXTO_PRINCIPAL,
-            color_borde         = constantes.ELEMENTO_BORDE_PRINCIPAL,
+            color_texto         = color_blanco,   # Letras blancas
+            color_borde         = color_dorado,   # Borde dorado
             grosor_borde        = constantes.BORDE_LIGERO,
-            color_hover         = constantes.ELEMENTO_HOVER_PRINCIPAL,
-            color_borde_hover   = constantes.ELEMENTO_HOVER_PRINCIPAL,
-            color_borde_clicado = constantes.ELEMENTO_CLICADO_PRINCIPAL,
+            color_hover         = (160, 20, 50),  # Vinotinto más brillante al pasar el mouse
+            color_borde_hover   = color_blanco,
+            color_borde_clicado = constantes.NARANJA,
             accion              = _accion_ordenar,
             deshabilitado       = False,
         )
 
         self._boton_ordenar = boton
         mesa.botones.append(boton)
-
-    # ═══════════════════════════════════════════════════════════════════════════
-    # LÓGICA INTERNA
-    # ═══════════════════════════════════════════════════════════════════════════
-
+        
     def _clave_carta(self, carta) -> tuple:
         """
         Clave de comparación según el modo activo.

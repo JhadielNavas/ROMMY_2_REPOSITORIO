@@ -47,9 +47,6 @@ class MostrarMixin:
             else:
                 self.agregar_mi_mano(mesa, mano_jugador_i, escala, dx, dy, x, y)
             self.mostrar_contador_de_cartas_manos(mesa)
-        # DEBUG: dibujar posiciones simuladas de 7 jugadores
-        if getattr(self, "debug_ver_posiciones_7", False):
-            self.dibujar_debug_posiciones_jugadores(5)
 
     def agregar_manos_jugadores(self, mesa, cantidad_cartas, jugador, escala, dx, dy, x, y):
         """Agrega las cartas de otros jugadores (reverso)"""
@@ -75,18 +72,11 @@ class MostrarMixin:
             mesa.botones.append(carta_agregar)
             x += dx
             y += dy
-    def mostrar_contador_de_cartas_manos(self,mesa):
-        for i, jugador_list in enumerate(self.elementos_mesa["cantidad_manos_jugadores"]):
-            jugador = self.lista_jugadores_objetos[i]
-
-            # Usar método reutilizable
-            x,y = self.determinar_ubicacion_contador_de_cartas(jugador)
-
-            es_local = (self.elementos_mesa["id_jugador"] == jugador.nro_jugador)
-            if not es_local:
-                self.mostrar_contadores_mano_jugadores(mesa, jugador_list["cantidad_mano"], x,y)
-            else:
-                self.mostrar_mi_contador_cartas_mano()
+    #cambio lismar         
+    def mostrar_contador_de_cartas_manos(self, *args, **kwargs):
+        """Función desactivada: Las cartas ahora se muestran en el panel principal"""
+        pass
+    
     def mostrar_mi_contador_cartas_mano(self):
         return
     def mostrar_contadores_mano_jugadores(self, mesa, cantidad_cartas, x, y):
@@ -249,18 +239,22 @@ class MostrarMixin:
         mesa.botones.append(mazo.elemento_mazo)
         self.mazo_quema = mazo
         self.referencia_elementos["elemento_mazo_quema"] = mesa.botones[-1]
-
+ #cambio lismar
     def crear_indicador_turno(self, mesa):
-        """Muestra un texto indicando de quién es el turno"""
+        """Muestra el cartel de turno con fondo vinotinto y letras blancas"""
         self.determinar_turno()
         nombre_jugador_turno = self.elementos_mesa["jugador_mano"][1]
+        
+        color_vinotinto = (128, 0, 32)
+        color_blanco = (255, 255, 255)
+        color_dorado = (218, 165, 32)
         
         if self.tu_turno:
             texto = f"¡ES TU TURNO! - {nombre_jugador_turno}"
             color_borde = constantes.NARANJA
         else:
             texto = f"Turno de: {nombre_jugador_turno}"
-            color_borde = constantes.ELEMENTO_BORDE_PRINCIPAL
+            color_borde = color_dorado
         
         ancho = constantes.ELEMENTO_PEQUENO_ANCHO * 0.70
         alto = constantes.ELEMENTO_PEQUENO_ALTO / 2
@@ -275,13 +269,12 @@ class MostrarMixin:
             x=x,
             y=y,
             tamaño_fuente=constantes.F_PEQUENA,
-            fuente=constantes.FUENTE_LLAMATIVA,
-            color=constantes.ELEMENTO_FONDO_PRINCIPAL,
+            fuente=constantes.FUENTE_ESTANDAR, # <── Aquí forzamos la fuente correcta
+            color=color_vinotinto,             # Fondo vinotinto
             radio_borde=constantes.REDONDEO_NORMAL,
-            color_texto=constantes.COLOR_TEXTO_PRINCIPAL,
+            color_texto=color_blanco,          # Letras blancas
             color_borde=color_borde,
             grosor_borde=constantes.BORDE_INTERMEDIO
         )
         self.referencia_elementos["indicador_turno"] = indicador
         mesa.botones.append(indicador)
-

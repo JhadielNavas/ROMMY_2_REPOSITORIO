@@ -27,36 +27,63 @@ class ActualizacionMixin:
             accion = lambda: print(f'las cantidad de cartas en el mazo son: {self.elementos_mesa["cantidad_cartas_mazo"]}')
             self.mostrar_mazo(mesa, x_relativo, y_relativo, scala, accion)
 
+    #cambio lismar
     def actualizar_elementos_jugadores(self):
-        elemento_jugadores = self.referencia_elementos["elemento_jugadores"]
-        for jugador in self.jugadores:
-            indice = next(i for i, obj in enumerate(elemento_jugadores) if obj.texto == f"Jugador {jugador.nro_jugador}: {jugador.nombre_jugador}")
-            if jugador.nro_jugador == self.elementos_mesa["id_jugador"]:
-                return
-            if jugador.nro_jugador == self.elementos_mesa["jugador_mano"][0]:
-                color_borde = constantes.NARANJA  # Naranja para turno
-                color_texto = constantes.COLOR_TEXTO_PRINCIPAL
-            else:
-                color_borde = constantes.ELEMENTO_BORDE_PRINCIPAL  # Azul normal
-                color_texto = constantes.COLOR_TEXTO_PRINCIPAL
-            elemento_jugadores[indice].color_borde_actual = color_borde
-            elemento_jugadores[indice].color_texto = color_texto
-            self.referencia_elementos["elemento_jugadores"] = elemento_jugadores
+        # Usamos la lista completa que sí incluye al jugador local
+        for jugador in self.lista_jugadores_objetos:
+            
+            # 1. Tu archivo carga_visuales.py ya guarda el panel en 'jugador.usuario'
+            if not hasattr(jugador, 'usuario') or not jugador.usuario:
+                continue
+                
+            panel = jugador.usuario
 
+            # 2. Buscar cuántas cartas tiene en tiempo real del diccionario
+            cartas = 0
+            for j_data in self.elementos_mesa.get("cantidad_manos_jugadores", []):
+                if str(j_data["id"]) == str(jugador.nro_jugador):
+                    cartas = j_data["cantidad_mano"]
+                    break
+                    
+            # 3. Inyectar los datos matemáticos directamente al panel visual
+            panel.cartas = cartas
+            panel.puntos = getattr(jugador, 'puntos', 0)
+            
+            # 4. Actualizar colores si es su turno
+            turno_actual = self.elementos_mesa.get("jugador_mano")
+            id_turno = str(turno_actual[0]) if turno_actual else "Nadie"
+
+            if str(jugador.nro_jugador) == id_turno:
+                panel.color_borde_actual = constantes.NARANJA
+            else:
+                panel.color_borde_actual = panel.color_dorado
+    #cambio lismar      
     def actualizar_indicador_turno(self):
         self.determinar_turno()
-        nombre_jugador_turno = self.elementos_mesa["jugador_mano"][1]
+        turno_actual = self.elementos_mesa.get("jugador_mano")
+        nombre_jugador_turno = turno_actual[1] if turno_actual and len(turno_actual) > 1 else "Nadie"
+        
+        color_vinotinto = (128, 0, 32)
+        color_blanco = (255, 255, 255)
         
         if self.tu_turno:
             texto = f"¡ES TU TURNO! - {nombre_jugador_turno}"
             color_borde = constantes.NARANJA
         else:
             texto = f"Turno de: {nombre_jugador_turno}"
-            color_borde = constantes.ELEMENTO_BORDE_PRINCIPAL
+            color_borde = (218, 165, 32) # Dorado
 
         indicador = self.referencia_elementos["indicador_turno"] 
+        
+        indicador.color = color_vinotinto
+        indicador.color_actual = color_vinotinto
+        indicador.color_texto = color_blanco
+        
+        # Cargamos la fuente correctamente usando el método de la clase
+        indicador.fuente = indicador.cargar_fuente(constantes.FUENTE_ESTANDAR)
+            
         indicador.texto = texto
-        indicador.prepar_texto()
+        indicador.prepar_texto() 
         indicador.color_borde_actual = color_borde
         self.referencia_elementos["indicador_turno"] = indicador
 
@@ -249,21 +276,14 @@ class ActualizacionMixin:
                 self.referencia_elementos["elemento_carta_quema"] = None
             return
     def actualizar_contadores_manos_jugadores(self):
-        for contador in self.referencia_elementos["contadores_mano_por_jugador"]:
-            # Intentar remover de overlays primero (nueva ubicación), luego botones (por compatibilidad)
-            if contador in self.un_juego.mesa.overlays:
-                self.un_juego.mesa.overlays.remove(contador)
-            elif contador in self.un_juego.mesa.botones:
-                self.un_juego.mesa.botones.remove(contador)
+        """Limpia los contadores antiguos, ahora la info está unificada en el panel principal"""
+        for contador in self.referencia_elementos.get("contadores_mano_por_jugador", []):
+            if hasattr(self.un_juego, 'mesa') and self.un_juego.mesa:
+                if contador in self.un_juego.mesa.overlays:
+                    self.un_juego.mesa.overlays.remove(contador)
+                elif contador in self.un_juego.mesa.botones:
+                    self.un_juego.mesa.botones.remove(contador)
         self.referencia_elementos["contadores_mano_por_jugador"].clear()
-        for jugador_list in self.elementos_mesa["cantidad_manos_jugadores"]:
-            nro = jugador_list["id"]
-            jugador = next(j for j in self.lista_jugadores_objetos if j.nro_jugador == nro)
-
-            es_local = (self.elementos_mesa["id_jugador"] == jugador.nro_jugador)
-            
-            if not es_local:
-                self.mostrar_contador_de_cartas_manos(self.un_juego.mesa)
 
     def actualizar_manos_jugadores(self,mesa):
         #para este punto el elemento "cantidad_manos_jugadores" deberia haber sido modificado en cada pantalla
@@ -294,7 +314,10 @@ class ActualizacionMixin:
             if not es_local:
                 # Usar cantidad_cartas_a_dibujar en lugar de jugador_list["cantidad_mano"]
                 self.agregar_manos_jugadores(mesa, cantidad_cartas_a_dibujar, jugador, escala, dx, dy, x, y)
-    
+        # --- LÍNEA NUEVA QUE DEBES AGREGAR AQUÍ ---
+        self.actualizar_elementos_jugadores() #cambio lismar añadida
+        
+             
     def actualizar_jugadas(self,mesa):
         try:
             for x in self.referencia_elementos["elementos_jugadas_jugadores"]:
@@ -338,13 +361,14 @@ class ActualizacionMixin:
                 self.botones_accion["no_comprar"].deshabilitado = True
                 self.botones_accion["no_comprar"].deshabilitar()
         if accion == "activar_mano":
+            mis_cartas = []
             for carta in self.referencia_elementos["elementos_mis_cartas"]:
                 carta.deshabilitado = False
                 carta.seleccionado = False
-                
-
+                mis_cartas.append(carta)
         if accion == "desactivar_mano":
+            mis_cartas = []
             for carta in self.referencia_elementos["elementos_mis_cartas"]:
                 carta.deshabilitado = True
                 carta.seleccionado = False
-
+                mis_cartas.append(carta)

@@ -420,14 +420,17 @@ class BotonesMixin:
             )
             mesa.botones.append(boton)
             self.botones_accion[texto.lower().replace(" ", "_")] = boton
-        x_cancel = x_base + (m * (ancho_boton + espacio))
+        x_cancel = x_base + (m * (ancho_boton + espacio)) #cambio lismar
         if opc:
             total_ancho = ancho_boton
             y_base = constantes.ALTO_MENU_MESA * 0.8
             boton = self.crear_boton_generico(
                 "CANCELAR",
                 x_cancel, y_base,
-                ancho_boton, alto_boton, lambda: self.crear_botones_despues_bajarse(mesa), False
+                ancho_boton, alto_boton, lambda: self.crear_botones_despues_bajarse(mesa), False,
+                # --- NUEVO COLOR ---
+                ruta_imagen_fondo="Imagenes/botones/boton_base.png",
+                color_texto=(218, 165, 32)
             )
             mesa.botones.append(boton)
             self.botones_accion["cancelar"] = boton
@@ -436,8 +439,10 @@ class BotonesMixin:
             boton_cancel = self.crear_boton_generico(
                 "CANCELAR",
                 x_cancel, y_base,
-                ancho_boton, alto_boton, lambda: self.crear_botones_despues_de_bajarse(mesa), False
+                ancho_boton, alto_boton, lambda: self.crear_botones_despues_de_bajarse(mesa), False,
+                # --- NUEVO COLOR ---
+                ruta_imagen_fondo="Imagenes/botones/boton_base.png",
+                color_texto=(218, 165, 32)
             )
             mesa.botones.append(boton_cancel)
             self.botones_accion["cancelar"] = boton_cancel
-

@@ -602,6 +602,8 @@ class Ventana(
                     ejecutar = False
                 controladores.modificacion_real_datos(self,evento,constantes)
                 self.ejecutar_manejo_eventos(evento)
+            
+            controladores.verificar_espera_inicio_partida(self)
 
             # ELIMINADO: self.pantalla.fill(constantes.FONDO_VENTANA)
             # Ya no es necesario limpiar con un color, porque ejecutar_dibujado()

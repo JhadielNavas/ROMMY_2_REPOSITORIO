@@ -11,30 +11,50 @@ BotonLogoMenu = importar_desde_carpeta("elementos_de_interfaz_de_usuario.py","Bo
 
 class MenuOpcionesMixin:
     """Mixin con métodos para sistema de menú de opciones"""
+    #cambio lismar
     def crear_boton_menu(self):
-        """Crea el botón de menú en la esquina superior derecha"""
-        ancho_boton = 90
-        alto_boton = 70
+        """Crea el botón de menú anclado a Tus Puntos, centrado, y MÁS GRANDE"""
+        import pygame
+        from recursos_graficos import constantes
+        from recursos_graficos.elementos_de_interfaz_de_usuario import BotonLogoMenu
         
-        x = constantes.ANCHO_MENU_MESA - ancho_boton - 5
-        y = 10
+        # 1. Aumentamos el tamaño fijo para que sea mucho más visible y cómodo
+        ancho_boton = 120  # Antes era 90
+        alto_boton = 90    # Antes era 70
         
-        ruta_menu = importar_desde_carpeta(
-            nombre_archivo="Imagenes/botones/menu.png",
-            nombre_carpeta="assets"
-        )
-
-        # 1. Cargar la imagen que subiste
-        # Asegúrate de que el archivo .jpg esté en la carpeta principal
-        imagen_aux = pygame.image.load(ruta_menu).convert_alpha()
+        # 2. Buscamos a "Tus Puntos" para usarlo de referencia posicional
+        boton_puntos = self.referencia_elementos.get("contador_puntos")
         
-        # 2. Ajustarla al tamaño del botón
-        imagen_final = pygame.transform.smoothscale(imagen_aux, (ancho_boton - 10, alto_boton - 10))
+        if boton_puntos:
+            # Posición X: A la derecha de "Tus Puntos" con 15 px de separación
+            x = boton_puntos.x + boton_puntos.ancho + 15
+            
+            # Posición Y: Alineamos los CENTROS para que se vean parejos
+            centro_y_puntos = boton_puntos.y + (boton_puntos.alto // 2)
+            y = int(centro_y_puntos - (alto_boton // 2))
+        else:
+            x = constantes.ANCHO_MENU_MESA - ancho_boton - 20
+            y = 10
+            
+        # Cargar la imagen del menú
+        imagen_aux = pygame.image.load("./assets/Imagenes/botones/menu.png").convert_alpha()
+        
+        # Escalar la imagen aprovechando el nuevo tamaño gigante
+        rect_img = imagen_aux.get_rect()
+        margen = 4 
+        factor_escala = min((ancho_boton - margen) / rect_img.width, (alto_boton - margen) / rect_img.height)
+        
+        nuevo_ancho = int(rect_img.width * factor_escala)
+        nuevo_alto = int(rect_img.height * factor_escala)
+        
+        imagen_final = pygame.transform.smoothscale(imagen_aux, (nuevo_ancho, nuevo_alto))
 
         boton = BotonLogoMenu(
             un_juego=self.un_juego,
             x=x, y=y,
-            radio_borde=5,
+            ancho=ancho_boton, 
+            alto=alto_boton,
+            radio_borde=constantes.REDONDEO_NORMAL,
             color_rayas=(0, 0, 0),
             color_rayas_hover=constantes.ELEMENTO_BORDE_CUATERNARIO,
             color_rayas_clicado=constantes.ELEMENTO_CLICADO_PRINCIPAL,
@@ -42,13 +62,15 @@ class MenuOpcionesMixin:
             accion=lambda: self.mostrar_menu_opciones(),
         )
         
-        # 3. Guardar la imagen en el objeto botón
+        # Forzamos los colores Vinotinto y Dorado
+        boton.color = (128, 0, 32)
+        boton.color_actual = (128, 0, 32)
+        boton.color_borde = (218, 165, 32)
+        boton.color_borde_actual = (218, 165, 32)
+        
         boton.imagen_menu = imagen_final
         
-        # ESTA ES LA LÍNEA DEL ERROR: Debe tener exactamente la misma 
-        # cantidad de espacios que la línea de arriba (boton.imagen_menu...)
         return boton
-    
     
     
     def mostrar_menu_opciones(self):
@@ -82,23 +104,23 @@ class MenuOpcionesMixin:
             constantes.BORDE_PRONUNCIADO,
             constantes.REDONDEO_NORMAL
         )
-        
-        fondo_transparente = pygame.Surface((int(ancho_menu), int(alto_menu)), pygame.SRCALPHA)
-        
-        pygame.draw.rect(
-            fondo_transparente, 
-            (0, 0, 0, 115),
-            fondo_transparente.get_rect(), 
-            border_radius=constantes.REDONDEO_NORMAL
-        )
-        
-        self.menu_opciones.agregar_imagen(fondo_transparente, (0, 0), 1)        
-        self.crear_botones_menu_opciones()
-        
+        #cambio lismar 80 a 90
         try:
-            self.crear_boton_silenciar_menu()
-        except Exception:
-            pass
+            ruta_fondo = "assets/Imagenes/fondos/fondo_pausa.png"
+            imagen_aux = pygame.image.load(ruta_fondo).convert_alpha()
+            fondo_personalizado = pygame.transform.smoothscale(imagen_aux, (int(ancho_menu), int(alto_menu)))
+            self.menu_opciones.agregar_imagen(fondo_personalizado, (0, 0), 1)
+        except Exception as e:
+            print(f"Error cargando la imagen de fondo: {e}")
+            fondo_transparente = pygame.Surface((int(ancho_menu), int(alto_menu)), pygame.SRCALPHA)
+            pygame.draw.rect(fondo_transparente, (0, 0, 0, 150), fondo_transparente.get_rect(), border_radius=constantes.REDONDEO_NORMAL)
+            self.menu_opciones.agregar_imagen(fondo_transparente, (0, 0), 1)    
+        self.crear_botones_menu_opciones()
+        #cambio lismar
+        try:
+            self.crear_controles_volumen()
+        except Exception as e:
+            print(f"Error cargando controles de volumen: {e}")
             
         self.un_juego.mesa_opciones = self.menu_opciones
         self.un_juego.mesa_opciones.mostrar()
@@ -111,7 +133,8 @@ class MenuOpcionesMixin:
         espacio = 20
         
         x_base = (self.menu_opciones.x + ancho_boton) * 0.575
-        y_base = self.menu_opciones.y + (self.menu_opciones.alto * 0.25)
+        y_base = self.menu_opciones.y + (self.menu_opciones.alto * 0.30) #cambio lismar 
+        
         
         opciones = [
             ("REANUDAR", self.reanudar_juego),
@@ -146,90 +169,106 @@ class MenuOpcionesMixin:
             
             self.menu_opciones.botones.append(boton)
 
-    def crear_boton_silenciar_menu(self):
-        """Añade un botón pequeño de silenciar dentro del menú de opciones."""
+    def ajustar_volumen(self, cantidad):
+        """Sube o baja el volumen de la música entre 0.0 y 1.0"""
+        juego = self.un_juego
+        vol_actual = getattr(juego, 'master_volume', 1.0)
+        
+        # Sumar o restar y evitar que se pase de 1.0 (100%) o baje de 0.0 (0%)
+        nuevo_vol = max(0.0, min(1.0, vol_actual + cantidad))
+        juego.master_volume = nuevo_vol
+        
+        # Aplicar el volumen real al mixer de Pygame
         try:
-            # Tamaño y posición relativa dentro del menú
-            tamaño = int(min(self.menu_opciones.ancho, self.menu_opciones.alto) * 0.08)
-            ancho = tamaño
-            alto = tamaño
-            x = int(self.menu_opciones.x + self.menu_opciones.ancho - ancho - 10)
-            y = int(self.menu_opciones.y + 10)
+            if pygame.mixer.get_init():
+                pygame.mixer.music.set_volume(nuevo_vol)
+        except Exception as e:
+            print(f"Error de audio: {e}")
+            
+        # Actualizar el porcentaje en el texto visual
+        if hasattr(self, 'texto_volumen'):
+            porcentaje = int(nuevo_vol * 100)
+            self.texto_volumen.texto = f"Vol: {porcentaje}%"
+            self.texto_volumen.prepar_texto()
 
-            def accion():
-                try:
-                    juego = self.un_juego
-                    # Alternar volumen maestro
-                    juego.master_volume = 0 if getattr(juego, 'master_volume', 1) == 1 else 1
-                    try:
-                        if pygame.mixer.get_init():
-                            pygame.mixer.music.set_volume(juego.master_volume)
-                    except Exception:
-                        pass
+    def crear_controles_volumen(self):
+        """Crea los botones de [+] y [-] con bordes dorados y desplazados a la derecha"""
+        from recursos_graficos.elementos_de_interfaz_de_usuario import Boton, Elemento_texto
+        from logica_interfaz.archivo_de_importaciones import importar_desde_carpeta
+        import pygame
+        
+        ancho_icono = 35
+        ancho_btn = 40
+        alto_btn = 40
+        ancho_texto = 130
+        
+        # Colores
+        color_vino_tinto = (128, 0, 32) 
+        color_dorado = (218, 165, 32)
+        
+        centro_x_menu = self.menu_opciones.x + (self.menu_opciones.ancho // 2)
+        
+        # Le sumamos + 20 al final para rodar todo el bloque hacia la derecha
+        x_base = int(centro_x_menu - (270 // 2))
+        y = int(self.menu_opciones.y + (self.menu_opciones.alto * 0.18))
+        
+        # 1. Ícono de volumen
+        icono = Boton(
+            un_juego=self.un_juego, texto="",
+            ancho=ancho_icono, alto=ancho_icono, x=x_base, y=y + 2,
+            tamaño_fuente=10, fuente=constantes.FUENTE_ESTANDAR,
+            color=None, radio_borde=0, color_texto=(0,0,0),
+            color_borde=None, grosor_borde=0, deshabilitado=True
+        )
+        try:
+            ruta_img = importar_desde_carpeta(nombre_archivo="Imagenes/Logos/Mute.png", nombre_carpeta="assets")
+            img = pygame.image.load(ruta_img).convert_alpha()
+            img = pygame.transform.smoothscale(img, (ancho_icono, ancho_icono))
+            icono.superficie_texto = img
+            icono.rect_texto = img.get_rect(center=icono.rect.center)
+            icono.color_actual = None 
+        except Exception as e:
+            print(f"No se pudo cargar el icono de volumen: {e}")
 
-                    # Actualizar borde del boton dentro del menu
-                    try:
-                        if juego.master_volume == 1:
-                            boton.color_borde = constantes.ELEMENTO_CLICADO_PRINCIPAL
-                        else:
-                            boton.color_borde = constantes.GRIS
-                        boton.color_borde_actual = boton.color_borde
-                    except Exception:
-                        pass
-
-                    # Sincronizar con el boton principal en la ventana, si existe
-                    try:
-                        if hasattr(juego, 'boton_silenciar') and juego.boton_silenciar:
-                            if juego.master_volume == 1:
-                                juego.boton_silenciar.color_borde = constantes.ELEMENTO_CLICADO_PRINCIPAL
-                            else:
-                                juego.boton_silenciar.color_borde = constantes.GRIS
-                            juego.boton_silenciar.color_borde_actual = juego.boton_silenciar.color_borde
-                    except Exception:
-                        pass
-                except Exception as e:
-                    print(f"Error alternando sonido desde menú opciones: {e}")
-
-            # Crear el botón (sin texto) y asignar imagen
-            boton = Boton(
-                un_juego=self.un_juego,
-                texto="",
-                ancho=ancho,
-                alto=alto,
-                x=x,
-                y=y,
-                tamaño_fuente=constantes.F_PEQUENA,
-                fuente=constantes.FUENTE_ESTANDAR,
-                color=self.menu_opciones.fondo_color if hasattr(self.menu_opciones, 'fondo_color') else constantes.ELEMENTO_FONDO_PRINCIPAL,
-                radio_borde=constantes.REDONDEO_NORMAL,
-                color_texto=constantes.COLOR_TEXTO_PRINCIPAL,
-                color_borde=constantes.ELEMENTO_CLICADO_PRINCIPAL if getattr(self.un_juego, 'master_volume', 1) == 1 else constantes.GRIS,
-                grosor_borde=constantes.BORDE_LIGERO,
-                color_borde_hover=constantes.ELEMENTO_HOVER_PRINCIPAL,
-                color_borde_clicado=constantes.ELEMENTO_CLICADO_PRINCIPAL,
-                grupo=[],
-                valor="silenciar_menu",
-                accion=accion,
-            )
-
-            # Cargar imagen y usarla como superficie
-            try:
-                ruta_img = importar_desde_carpeta(nombre_archivo="Imagenes/Logos/Mute.png", nombre_carpeta="assets")
-                import pygame
-                img = pygame.image.load(ruta_img).convert_alpha()
-                img = pygame.transform.smoothscale(img, (ancho, alto))
-                boton.superficie_texto = img
-                boton.rect_texto = img.get_rect(center=boton.rect.center)
-                boton.color_actual = self.menu_opciones.fondo_color
-            except Exception as e:
-                print(f"No se pudo cargar imagen Mute.png en menu opciones: {e}")
-
-            # Agregar al menú
-            self.menu_opciones.botones.append(boton)
-            return boton
-        except Exception:
-            return None
-
+        # 2. Botón Menos (-)
+        boton_menos = Boton(
+            un_juego=self.un_juego, texto="-",
+            ancho=ancho_btn, alto=alto_btn, x=x_base + 45, y=y,
+            tamaño_fuente=34, fuente=constantes.FUENTE_ESTANDAR,
+            color=color_vino_tinto, radio_borde=10, 
+            color_texto=color_dorado,
+            color_borde=color_dorado, grosor_borde=2,  # <── Borde Dorado
+            color_borde_hover=constantes.ELEMENTO_HOVER_PRINCIPAL,
+            color_borde_clicado=constantes.ELEMENTO_CLICADO_PRINCIPAL,
+            accion=lambda: self.ajustar_volumen(-0.1)
+        )
+        
+        # 3. Texto indicador de porcentaje
+        vol_actual = getattr(self.un_juego, 'master_volume', 1.0)
+        self.texto_volumen = Elemento_texto(
+            un_juego=self.un_juego, texto=f"Vol: {int(vol_actual * 100)}%",
+            ancho=ancho_texto, alto=alto_btn, x=x_base + 90, y=y,
+            tamaño_fuente=24, fuente=constantes.FUENTE_ESTANDAR,
+            color=None, radio_borde=0, color_texto=color_dorado,
+            color_borde=None, grosor_borde=0
+        )
+        
+        # 4. Botón Más (+)
+        boton_mas = Boton(
+            un_juego=self.un_juego, texto="+",
+            ancho=ancho_btn, alto=alto_btn, x=x_base + 230, y=y,
+            tamaño_fuente=30, fuente=constantes.FUENTE_ESTANDAR,
+            color=color_vino_tinto, radio_borde=10, 
+            color_texto=color_dorado,
+            color_borde=color_dorado, grosor_borde=2,  # <── Borde Dorado
+            color_borde_hover=constantes.ELEMENTO_HOVER_PRINCIPAL,
+            color_borde_clicado=constantes.ELEMENTO_CLICADO_PRINCIPAL,
+            accion=lambda: self.ajustar_volumen(0.1)
+        )
+        
+        # Inyectar los 4 elementos
+        self.menu_opciones.botones.extend([icono, boton_menos, self.texto_volumen, boton_mas])
+        
     def reanudar_juego(self):
         """Cierra el menú de opciones"""
         print("DEBUG: Reanudar juego")

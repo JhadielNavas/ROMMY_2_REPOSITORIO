@@ -678,12 +678,12 @@ class CartelAlerta:
             self.duracion_ms = duracion_ms  # Duración en milisegundos (None = sin límite)
             self.tiempo_mostrado = None  # Marca cuando se mostró por primera vez
             
-            # Colores
-            self.color_fondo = constantes.ELEMENTO_FONDO_PRINCIPAL
-            self.color_borde = constantes.ELEMENTO_BORDE_CUATERNARIO
-            self.color_texto = constantes.COLOR_TEXTO_PRINCIPAL
+            # Colores - Casino Theme
+            self.color_fondo = (55, 10, 15) # Vinotinto oscuro
+            self.color_borde = constantes.ELEMENTO_FONDO_PRINCIPAL  # Gold
+            self.color_texto = constantes.BLANCO
             self.radio_borde = constantes.REDONDEO_NORMAL
-            self.grosor_borde = constantes.BORDE_PRONUNCIADO
+            self.grosor_borde = 4
             
         #========Inicio Jesua========
             # Botón de cerrar (opcional)
@@ -783,19 +783,34 @@ class CartelAlerta:
                     self.ocultar()
                     return
                 
+            # Overlay semitransparente para oscurecer el fondo
+            overlay = pygame.Surface((self.pantalla.get_width(), self.pantalla.get_height()), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 150))
+            self.pantalla.blit(overlay, (0, 0))
+
+            # Dibujar sombra paralela
+            rect_sombra = self.rect.copy()
+            rect_sombra.x += 8
+            rect_sombra.y += 8
+            pygame.draw.rect(self.pantalla, (0, 0, 0, 100), rect_sombra, border_radius=self.radio_borde)
+
             # Dibujar fondo y borde
             pygame.draw.rect(self.pantalla, self.color_fondo, self.rect, border_radius=self.radio_borde)
             pygame.draw.rect(self.pantalla, self.color_borde, self.rect, self.grosor_borde, border_radius=self.radio_borde)
             
             # Dibujar botón de cerrar (X) si está permitido
             if self.mostrar_boton_cerrar:
-                pygame.draw.rect(self.pantalla, (255, 100, 100), self.boton_cerrar_rect, border_radius=5)
-                pygame.draw.line(self.pantalla, (255, 255, 255), 
-                                (self.boton_cerrar_rect.left + 5, self.boton_cerrar_rect.top + 5),
-                                (self.boton_cerrar_rect.right - 5, self.boton_cerrar_rect.bottom - 5), 2)
-                pygame.draw.line(self.pantalla, (255, 255, 255),
-                                (self.boton_cerrar_rect.right - 5, self.boton_cerrar_rect.top + 5),
-                                (self.boton_cerrar_rect.left + 5, self.boton_cerrar_rect.bottom - 5), 2)    
+                # Hover effect for close button
+                color_x = (255, 100, 100) if self.esta_hover else self.color_borde
+                
+                centro_x, centro_y = self.boton_cerrar_rect.center
+                # Círculo de fondo para la X
+                pygame.draw.circle(self.pantalla, self.color_fondo, (centro_x, centro_y), 15)
+                pygame.draw.circle(self.pantalla, color_x, (centro_x, centro_y), 15, 2)
+                
+                # Líneas de la X
+                pygame.draw.line(self.pantalla, color_x, (centro_x - 6, centro_y - 6), (centro_x + 6, centro_y + 6), 3)
+                pygame.draw.line(self.pantalla, color_x, (centro_x + 6, centro_y - 6), (centro_x - 6, centro_y + 6), 3)
             #=======Fin Jesua========
             
             # --- CENTRAR EL TEXTO ---

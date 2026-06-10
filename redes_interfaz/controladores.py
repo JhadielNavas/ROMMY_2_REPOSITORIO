@@ -531,6 +531,8 @@ def modificacion_real_datos(un_juego, evento, constantes):
         estado_espera_inicio['evento_pendiente'] = evento
         estado_espera_inicio['ultimo_debug'] = None  # Resetear para empezar a contar desde el inicio
     
+def verificar_espera_inicio_partida(un_juego):
+    global estado_espera_inicio
     # Verificar en cada frame si debemos mostrar la mesa (no bloqueante)
     if estado_espera_inicio['esperando']:
         tiempo_actual = pygame.time.get_ticks()
