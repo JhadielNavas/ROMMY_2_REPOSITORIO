@@ -70,15 +70,19 @@ def Crear_servidor(un_juego, menu):
         nombre_creador_sala and 
         nombre_sala and 
         max_jugadores > 0):
-        
-        un_juego.lista_elementos = {
+        ##cambiada la lista de elementos
+        un_juego.lista_elementos.update({
             "nombre_creador": nombre_creador_sala,
             "nombre_sala": nombre_sala,
             "cantidad_jugadores": max_jugadores,
-            "ip_sala":"127.0.0.1",
+            "ip_sala": "127.0.0.1",
             "lista_jugadores": [],
-            "nombre_unirse": ""
-        }
+            "nombre_unirse": "",
+            "salas_disponibles": un_juego.lista_elementos.get("salas_disponibles", []),
+            "es_host": True,
+            "origen_espera": "crear_sala"
+        })
+
         print("holaaa")
         Agregar_jugador(un_juego)
         return True
@@ -280,6 +284,10 @@ def Unirse_a_sala_seleccionada(un_juego, elemento_seleccion_sala):
                 un_juego.detener_musica()
         except Exception:
             pass
+
+        un_juego.lista_elementos["es_host"] = False
+        un_juego.lista_elementos["origen_espera"] = "unirse_sala"
+
         Mostrar_seccion(un_juego, un_juego.menu_mesa_espera)
         try:
             if hasattr(un_juego, 'reproducir_musica_espera'):
@@ -307,7 +315,11 @@ def mostrar_menu_mesa_espera(un_juego):
     if hasattr(un_juego, "menu_nombre_creador"):
         Valores_crear_sevidor(un_juego, un_juego.menu_nombre_creador)
 
+
     if Crear_servidor(un_juego, un_juego.menu_nombre_creador):
+        un_juego.lista_elementos["es_host"] = True
+        un_juego.lista_elementos["origen_espera"] = "crear_sala"
+
     # (re)crear el menú ahora que lista_elementos ya está actualizada
         un_juego.menu_mesa_espera = un_juego.Menu_mesa_espera()
         # Detener música del menú principal si está sonando
@@ -521,6 +533,19 @@ def modificacion_real_datos(un_juego, evento, constantes):
     
     if evento.type == constantes.EVENTO_SALAS_ENCONTRADAS:
         un_juego.lista_elementos["salas_disponibles"] = evento.salas
+
+        # Si estamos en el menú de selección de sala, reconstruirlo con la lista nueva
+        try:
+            if hasattr(un_juego, "menu_seleccion_sala") and un_juego.menu_seleccion_sala.visible:
+                if un_juego.menu_seleccion_sala in un_juego.elementos_creados:
+                    un_juego.elementos_creados.remove(un_juego.menu_seleccion_sala)
+
+                un_juego.menu_seleccion_sala = un_juego.Menu_seleccion_sala()
+                Mostrar_seccion(un_juego, un_juego.menu_seleccion_sala)
+
+                print("Menú de salas actualizado con salas nuevas")
+        except Exception as e:
+            print(f"No se pudo refrescar menú de salas: {e}")
     
     # Manejar evento de inicio de partida - versión no bloqueante
     if evento.type == constantes.EVENTO_INICIAR_PARTIDA:
@@ -575,3 +600,94 @@ def verificar_espera_inicio_partida(un_juego):
             estado_espera_inicio['evento_pendiente'] = None
             estado_espera_inicio['ultimo_debug'] = None
             print("Mesa mostrada")
+
+##metodo de desconexion para el host y jugadores, este metodo se llama al darle salir a la mesa de espera, si es el host se desconecta el cliente y el servidor, si es un jugador que se unio solo se desconecta el cliente, luego se regresa al menu de inicio o al menu de seleccion de sala dependiendo del origen del jugador (si era un jugador que se unio o el host)
+
+def regresar_desde_mesa_espera(un_juego):
+    global cliente_rummy, server_rummy, conexion_salas
+
+    es_host = un_juego.lista_elementos.get("es_host", False)
+    origen = un_juego.lista_elementos.get("origen_espera", "")
+
+    if es_host:
+        print("El host salió. Cerrando servidor...")
+
+        try:
+            if cliente_rummy is not None:
+                cliente_rummy.activo = False
+
+                if hasattr(cliente_rummy, "buscador"):
+                    cliente_rummy.buscador = False
+
+                cliente_rummy.desconectar()
+                cliente_rummy = None
+
+        except Exception as e:
+            print(f"Error desconectando cliente host: {e}")
+
+        try:
+            if server_rummy is not None:
+                server_rummy.activo = False
+
+                if hasattr(server_rummy, "buscador"):
+                    server_rummy.buscador = False
+
+                server_rummy.desconectar()
+                server_rummy = None
+
+        except Exception as e:
+            print(f"Error cerrando servidor: {e}")
+
+        try:
+            un_juego.lista_elementos["salas_disponibles"] = []
+            un_juego.lista_elementos["lista_jugadores"] = []
+            un_juego.lista_elementos["nombre_sala"] = ""
+            un_juego.lista_elementos["nombre_creador"] = ""
+            un_juego.lista_elementos["es_host"] = False
+            un_juego.lista_elementos["origen_espera"] = ""
+
+        except Exception as e:
+            print(f"Error limpiando datos de sala local: {e}")
+
+        try:
+            conexion_salas.buscador = True
+        except Exception:
+            pass
+
+        Mostrar_seccion(un_juego, un_juego.menu_Cantidad_Jugadores)
+
+    else:
+        print("Jugador externo salió de la sala de espera.")
+
+        try:
+            if cliente_rummy is not None:
+                cliente_rummy.activo = False
+
+                if hasattr(cliente_rummy, "buscador"):
+                    cliente_rummy.buscador = False
+
+                cliente_rummy.desconectar()
+                cliente_rummy = None
+
+        except Exception as e:
+            print(f"Error desconectando jugador: {e}")
+
+        try:
+            conexion_salas.buscador = True
+        except Exception:
+            pass
+
+        if origen == "unirse_sala":
+            Mostrar_seccion(un_juego, un_juego.menu_nombre_usuario)
+        else:
+            Mostrar_seccion(un_juego, un_juego.menu_seleccion_sala)
+
+    try:
+        if hasattr(un_juego, "detener_musica"):
+            un_juego.detener_musica()
+
+        if hasattr(un_juego, "reproducir_musica_menu"):
+            un_juego.reproducir_musica_menu()
+
+    except Exception as e:
+        print(f"Error cambiando música al regresar: {e}")
