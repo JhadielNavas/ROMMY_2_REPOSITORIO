@@ -262,7 +262,7 @@ class Ventana(
 
             img = pygame.image.load(ruta_img).convert_alpha()
 
-            escala = 0.85  # ajusta este número
+            escala = 0.75  # ajusta este número
             nuevo_ancho = int(img.get_width() * escala)
             nuevo_alto = int(img.get_height() * escala)
 
@@ -270,7 +270,7 @@ class Ventana(
 
             boton_jugar.rect.width = nuevo_ancho
             boton_jugar.rect.height = nuevo_alto
-            boton_jugar.rect.center = (x + ancho // 2, y + alto // 2)
+            boton_jugar.rect.center = (x + ancho // 2, y + alto // 2 - 30)
 
             boton_jugar.superficie_texto = img
             boton_jugar.rect_texto = img.get_rect(center=boton_jugar.rect.center)
