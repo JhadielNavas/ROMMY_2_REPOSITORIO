@@ -146,11 +146,11 @@ class MenuMesaEsperaMixin:
             controladores.Mostrar_seccion(self, self.menu_mesa_espera)
 
     def crear_boton_regresar_mesa_espera(self, menu_mesa_espera):
-        ancho = 215
-        alto = 70
+        ancho = 230
+        alto = 80
 
         x = 70
-        y = 610
+        y = 600
 
         boton_regresar = menu_mesa_espera.crear_elemento(
             x=x,

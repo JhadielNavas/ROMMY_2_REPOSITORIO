@@ -533,6 +533,19 @@ def modificacion_real_datos(un_juego, evento, constantes):
     
     if evento.type == constantes.EVENTO_SALAS_ENCONTRADAS:
         un_juego.lista_elementos["salas_disponibles"] = evento.salas
+
+        # Si estamos en el menú de selección de sala, reconstruirlo con la lista nueva
+        try:
+            if hasattr(un_juego, "menu_seleccion_sala") and un_juego.menu_seleccion_sala.visible:
+                if un_juego.menu_seleccion_sala in un_juego.elementos_creados:
+                    un_juego.elementos_creados.remove(un_juego.menu_seleccion_sala)
+
+                un_juego.menu_seleccion_sala = un_juego.Menu_seleccion_sala()
+                Mostrar_seccion(un_juego, un_juego.menu_seleccion_sala)
+
+                print("Menú de salas actualizado con salas nuevas")
+        except Exception as e:
+            print(f"No se pudo refrescar menú de salas: {e}")
     
     # Manejar evento de inicio de partida - versión no bloqueante
     if evento.type == constantes.EVENTO_INICIAR_PARTIDA:
@@ -599,17 +612,40 @@ def regresar_desde_mesa_espera(un_juego):
 
         try:
             if cliente_rummy is not None:
+                cliente_rummy.activo = False
+
+                if hasattr(cliente_rummy, "buscador"):
+                    cliente_rummy.buscador = False
+
                 cliente_rummy.desconectar()
                 cliente_rummy = None
+
         except Exception as e:
             print(f"Error desconectando cliente host: {e}")
 
         try:
             if server_rummy is not None:
+                server_rummy.activo = False
+
+                if hasattr(server_rummy, "buscador"):
+                    server_rummy.buscador = False
+
                 server_rummy.desconectar()
                 server_rummy = None
+
         except Exception as e:
             print(f"Error cerrando servidor: {e}")
+
+        try:
+            un_juego.lista_elementos["salas_disponibles"] = []
+            un_juego.lista_elementos["lista_jugadores"] = []
+            un_juego.lista_elementos["nombre_sala"] = ""
+            un_juego.lista_elementos["nombre_creador"] = ""
+            un_juego.lista_elementos["es_host"] = False
+            un_juego.lista_elementos["origen_espera"] = ""
+
+        except Exception as e:
+            print(f"Error limpiando datos de sala local: {e}")
 
         try:
             conexion_salas.buscador = True
@@ -623,8 +659,14 @@ def regresar_desde_mesa_espera(un_juego):
 
         try:
             if cliente_rummy is not None:
+                cliente_rummy.activo = False
+
+                if hasattr(cliente_rummy, "buscador"):
+                    cliente_rummy.buscador = False
+
                 cliente_rummy.desconectar()
                 cliente_rummy = None
+
         except Exception as e:
             print(f"Error desconectando jugador: {e}")
 
@@ -641,7 +683,9 @@ def regresar_desde_mesa_espera(un_juego):
     try:
         if hasattr(un_juego, "detener_musica"):
             un_juego.detener_musica()
+
         if hasattr(un_juego, "reproducir_musica_menu"):
             un_juego.reproducir_musica_menu()
+
     except Exception as e:
         print(f"Error cambiando música al regresar: {e}")
