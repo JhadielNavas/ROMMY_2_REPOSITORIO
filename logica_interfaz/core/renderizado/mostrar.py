@@ -245,12 +245,12 @@ class MostrarMixin:
         self.determinar_turno()
         nombre_jugador_turno = self.elementos_mesa["jugador_mano"][1]
         
-        color_vinotinto = (128, 0, 32)
+        #color_vinotinto = (128, 0, 32)
         color_blanco = (255, 255, 255)
         color_dorado = (218, 165, 32)
         
         if self.tu_turno:
-            texto = f"¡ES TU TURNO! - {nombre_jugador_turno}"
+            texto = f"¡TU TURNO! - {nombre_jugador_turno}"
             color_borde = constantes.NARANJA
         else:
             texto = f"Turno de: {nombre_jugador_turno}"
@@ -260,21 +260,44 @@ class MostrarMixin:
         alto = constantes.ELEMENTO_PEQUENO_ALTO / 2
         x = (constantes.ANCHO_MENU_MESA - ancho) * 0.02
         y = (constantes.ALTO_MENU_MESA - alto) * 0.02
+
+
+        # Imagen base del indicador de turno
+        try:
+            ruta_base = importar_desde_carpeta(
+                nombre_archivo="Imagenes/botones/boton_base.png",
+                nombre_carpeta="assets"
+            )
+
+            img_base = pygame.image.load(ruta_base).convert_alpha()
+            img_base = pygame.transform.smoothscale(
+                img_base,
+                (int(ancho), int(alto))
+            )
+
+            mesa.agregar_imagen(img_base, (x, y), 1)
+
+        except Exception as e:
+            print(f"Error cargando boton_base.png para indicador de turno: {e}")
+
+        
+        x_texto = x + 14
+        y_texto = y + 8
         
         indicador = Elemento_texto(
             un_juego=self.un_juego,
             texto=texto,
             ancho=ancho,
             alto=alto,
-            x=x,
-            y=y,
-            tamaño_fuente=constantes.F_PEQUENA,
+            x=x_texto,
+            y=y_texto,
+            tamaño_fuente=30,
             fuente=constantes.FUENTE_ESTANDAR, # <── Aquí forzamos la fuente correcta
-            color=color_vinotinto,             # Fondo vinotinto
-            radio_borde=constantes.REDONDEO_NORMAL,
+            color=None,            # sin fondo
+            radio_borde=0,
             color_texto=color_blanco,          # Letras blancas
             color_borde=color_borde,
-            grosor_borde=constantes.BORDE_INTERMEDIO
+            grosor_borde=0
         )
         self.referencia_elementos["indicador_turno"] = indicador
         mesa.botones.append(indicador)

@@ -92,43 +92,52 @@ class MenuOpcionesMixin:
 
     def crear_menu_opciones(self):
         """Crea el menú de opciones"""
-        import pygame
+        
+
         ancho_menu = constantes.ANCHO_VENTANA * 0.6
         alto_menu = constantes.ALTO_VENTANA * 0.8
-        
+
         x, y = self.un_juego.centrar(ancho_menu, alto_menu)
-        
+
         self.menu_opciones = Menu(
             self.un_juego,
             ancho_menu,
             alto_menu,
             x,
             y,
-            constantes.ELEMENTO_FONDO_SECUNDARO,
-            constantes.ELEMENTO_BORDE_SECUNDARIO,
-            constantes.BORDE_PRONUNCIADO,
-            constantes.REDONDEO_NORMAL
+            None,
+            constantes.SIN_COLOR,
+            constantes.SIN_BORDE,
+            0
         )
-        #cambio lismar 80 a 90
+
         try:
-            ruta_fondo = "assets/Imagenes/fondos/fondo_pausa.png"
+            ruta_fondo = importar_desde_carpeta(
+                nombre_archivo="Imagenes/fondos/fondo_pausa.png",
+                nombre_carpeta="assets"
+            )
+
             imagen_aux = pygame.image.load(ruta_fondo).convert_alpha()
-            fondo_personalizado = pygame.transform.smoothscale(imagen_aux, (int(ancho_menu), int(alto_menu)))
+            fondo_personalizado = pygame.transform.smoothscale(
+                imagen_aux,
+                (int(ancho_menu), int(alto_menu))
+            )
+
             self.menu_opciones.agregar_imagen(fondo_personalizado, (0, 0), 1)
+
         except Exception as e:
             print(f"Error cargando la imagen de fondo: {e}")
-            fondo_transparente = pygame.Surface((int(ancho_menu), int(alto_menu)), pygame.SRCALPHA)
-            pygame.draw.rect(fondo_transparente, (0, 0, 0, 150), fondo_transparente.get_rect(), border_radius=constantes.REDONDEO_NORMAL)
-            self.menu_opciones.agregar_imagen(fondo_transparente, (0, 0), 1)    
+
         self.crear_botones_menu_opciones()
-        #cambio lismar
+
         try:
             self.crear_controles_volumen()
         except Exception as e:
             print(f"Error cargando controles de volumen: {e}")
-            
+
         self.un_juego.mesa_opciones = self.menu_opciones
         self.un_juego.mesa_opciones.mostrar()
+
         print(f"DEBUG: Menú de opciones creado con {len(self.menu_opciones.botones)} botones")
 
     def crear_botones_menu_opciones(self):
