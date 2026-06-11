@@ -405,7 +405,7 @@ class MostrarMixin:
             alto=alto,
             x=x_texto,
             y=y_texto,
-            tamaño_fuente=30,
+            tamaño_fuente=27,
             fuente=constantes.FUENTE_ESTANDAR, # <── Aquí forzamos la fuente correcta
             color=None,            # sin fondo
             radio_borde=0,
