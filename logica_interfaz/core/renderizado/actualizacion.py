@@ -200,7 +200,7 @@ class ActualizacionMixin:
             mesa.botones.append(carta_visual)
             x += dx
             y += dy
-        
+            
         # Restaurar prioridades si existen
         for carta_visual in self.referencia_elementos["elementos_mis_cartas"]:
             if carta_visual.valor in prioridades_guardadas:
