@@ -32,24 +32,50 @@ class ActualizacionMixin:
         # Usamos la lista completa que sí incluye al jugador local
         for jugador in self.lista_jugadores_objetos:
             
-            # 1. Tu archivo carga_visuales.py ya guarda el panel en 'jugador.usuario'
+            # 1. Validar que el panel visual exista
             if not hasattr(jugador, 'usuario') or not jugador.usuario:
                 continue
                 
             panel = jugador.usuario
 
-            # 2. Buscar cuántas cartas tiene en tiempo real del diccionario
+            # 2. Buscar cuántas cartas tiene en tiempo real del diccionario del servidor
             cartas = 0
             for j_data in self.elementos_mesa.get("cantidad_manos_jugadores", []):
                 if str(j_data["id"]) == str(jugador.nro_jugador):
                     cartas = j_data["cantidad_mano"]
                     break
                     
-            # 3. Inyectar los datos matemáticos directamente al panel visual
+            # Mantener la misma lógica de visualización que limita las cartas físicas en pantalla
+            es_local = (self.elementos_mesa["id_jugador"] == jugador.nro_jugador)
+            cantidad_visual = cartas
+            if cantidad_visual > 15 and not es_local:
+                cantidad_visual = 14
+
+            # 3. Inyectar los datos numéricos al panel visual
             panel.cartas = cartas
             panel.puntos = getattr(jugador, 'puntos', 0)
             
-            # 4. Actualizar colores si es su turno
+            # ─── NUEVO: AJUSTE DE CENTRADO DINÁMICO EN EL EJE DE LAS CARTAS ───
+            if cantidad_visual > 0:
+                dx, dy = self.calcular_desplazamiento_mano(jugador)
+                
+                if getattr(jugador, 'fila_cartas', 'horizontal') == 'horizontal':
+                    # Si las cartas crecen horizontales (arriba/abajo), movemos panel.x a la mitad exacta de la fila
+                    desfase_centro = ((cantidad_visual - 1) * dx) / 2
+                    panel.x = panel.base_x + desfase_centro
+                    panel.y = panel.base_y  # Mantiene su altura de diseño intacta
+                else:
+                    # Si crecen verticales (izquierda/derecha), movemos panel.y a la mitad de la fila
+                    desfase_centro = ((cantidad_visual - 1) * dy) / 2
+                    panel.y = panel.base_y + desfase_centro
+                    panel.x = panel.base_x  # Mantiene su separación lateral de diseño intacta
+            else:
+                # Si se queda con 0 cartas por algún motivo, vuelve a su posición original estática
+                panel.x = panel.base_x
+                panel.y = panel.base_y
+            # ──────────────────────────────────────────────────────────────────
+            
+            # 4. Actualizar colores del borde si es su turno
             turno_actual = self.elementos_mesa.get("jugador_mano")
             id_turno = str(turno_actual[0]) if turno_actual else "Nadie"
 
