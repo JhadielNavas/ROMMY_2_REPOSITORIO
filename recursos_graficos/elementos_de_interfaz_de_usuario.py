@@ -1346,6 +1346,64 @@ class BotonRadioImagenes(BotonRadio):
         self.seleccionado = False
         self.color_borde_actual = self.color_borde
         self.y = self.y_base
+
+class BotonCarta(Boton): #Añadi aqui 
+    """
+    Botón especializado para mostrar una carta como imagen clickeable.
+    Dibuja la imagen de la carta escalada dentro del botón,
+    con efecto hover (brillo) y borde resaltado al pasar el mouse.
+    """
+    def __init__(self, un_juego, imagen_carta, x, y, escala, accion=None,
+                 color_borde_hover=None, color_borde_clicado=None, **kwargs):
+
+        # Escalar la imagen
+        w = int(imagen_carta.get_width() * escala)
+        h = int(imagen_carta.get_height() * escala)
+        self.imagen_carta = pygame.transform.smoothscale(imagen_carta, (w, h))
+
+        super().__init__(
+            un_juego=un_juego,
+            texto="",
+            ancho=w,
+            alto=h,
+            x=x,
+            y=y,
+            tamaño_fuente=0,
+            fuente=constantes.FUENTE_ESTANDAR,
+            color=constantes.SIN_COLOR,
+            radio_borde=3,
+            color_texto=constantes.BLANCO,
+            color_borde=constantes.NEGRO,
+            grosor_borde=1,
+            color_borde_hover=color_borde_hover or constantes.NARANJA,
+            color_borde_clicado=color_borde_clicado or constantes.VERDE_CLARO,
+            accion=accion,
+            **kwargs
+        )
+
+    def dibujar(self):
+        if not self.visible:
+            return
+
+        # Dibujar la imagen de la carta
+        self.pantalla.blit(self.imagen_carta, (self.x, self.y))
+
+        # Borde normal o hover
+        if self.grosor_borde > 0 and self.color_borde_actual is not None:
+            pygame.draw.rect(
+                self.pantalla,
+                self.color_borde_actual,
+                self.rect,
+                self.grosor_borde,
+                border_radius=self.radio_borde
+            )
+
+        # Brillo al hacer hover
+        if self.esta_hover:
+            superposicion = pygame.Surface((self.ancho, self.alto), pygame.SRCALPHA)
+            superposicion.fill((255, 255, 255, 50))
+            self.pantalla.blit(superposicion, self.rect.topleft)
+
 class BotonLogoMenu(Boton):
     def __init__(self, un_juego, x, y, ancho=40, alto=30,
                  radio_borde=5, deshabilitado=False, accion=None,
@@ -1406,3 +1464,110 @@ class BotonLogoMenu(Boton):
     def manejar_evento(self, evento):
         """Maneja eventos del botón menú"""
         return super().manejar_evento(evento)
+
+class ScrollHorizontal: #Añadi aqui
+    """
+    Contenedor con scroll horizontal para mostrar imágenes que no caben en el ancho visible.
+    Uso: crear instancia, llamar dibujar(), manejar_evento() y verificar_hover() cada frame.
+    """
+    def __init__(self, un_juego, x, y, ancho_visible, alto, color_barra=None, color_thumb=None):
+        self.pantalla = un_juego.pantalla
+        self.x = x
+        self.y = y
+        self.ancho_visible = ancho_visible
+        self.alto = alto
+
+        # Altura reservada para la barra de scroll
+        self.alto_barra = 14
+        self.alto_contenido = alto - self.alto_barra - 6
+
+        # Superficie interna donde se dibujan las cartas
+        self.ancho_contenido = ancho_visible  # se expande al agregar imágenes
+        self.superficie = pygame.Surface((self.ancho_contenido, self.alto_contenido), pygame.SRCALPHA)
+
+        self.imagenes = []       # lista de (imagen, (x_local, y_local))
+        self.scroll_x = 0        # desplazamiento actual en píxeles
+        self.max_scroll = 0      # máximo desplazamiento posible
+
+        # Colores de la barra
+        self.color_barra = color_barra or (60, 60, 60, 180)
+        self.color_thumb = color_thumb or constantes.ELEMENTO_BORDE_PRINCIPAL
+
+        # Estado del drag
+        self._arrastrando = False
+        self._drag_offset = 0
+
+    def agregar_imagen(self, imagen, x_local, y_local):
+        """Agrega una imagen al contenido interno con posición relativa"""
+        self.imagenes.append((imagen, (x_local, y_local)))
+        # Expandir la superficie si la imagen se sale del ancho actual
+        borde_derecho = x_local + imagen.get_width()
+        if borde_derecho > self.ancho_contenido:
+            self.ancho_contenido = borde_derecho + 10
+            self.superficie = pygame.Surface((self.ancho_contenido, self.alto_contenido), pygame.SRCALPHA)
+        self.max_scroll = max(0, self.ancho_contenido - self.ancho_visible)
+
+    def _rect_barra(self):
+        """Rectángulo del fondo de la barra"""
+        return pygame.Rect(self.x, self.y + self.alto_contenido + 4, self.ancho_visible, self.alto_barra)
+
+    def _rect_thumb(self):
+        """Rectángulo del thumb (la parte que se arrastra)"""
+        barra = self._rect_barra()
+        if self.max_scroll == 0:
+            return barra  # Si no hay scroll, el thumb ocupa toda la barra
+        ratio_visible = self.ancho_visible / self.ancho_contenido
+        ancho_thumb = max(30, int(self.ancho_visible * ratio_visible))
+        ratio_scroll = self.scroll_x / self.max_scroll
+        x_thumb = barra.x + int((self.ancho_visible - ancho_thumb) * ratio_scroll)
+        return pygame.Rect(x_thumb, barra.y, ancho_thumb, self.alto_barra)
+
+    def dibujar(self):
+        # Redibujar superficie interna
+        self.superficie = pygame.Surface((self.ancho_contenido, self.alto_contenido), pygame.SRCALPHA)
+        for imagen, (ix, iy) in self.imagenes:
+            self.superficie.blit(imagen, (ix, iy))
+
+        # Recortar la zona visible según el scroll
+        area_visible = pygame.Rect(int(self.scroll_x), 0, self.ancho_visible, self.alto_contenido)
+        self.pantalla.blit(self.superficie, (self.x, self.y), area_visible)
+
+        # Dibujar barra de scroll solo si hay contenido que scrollear
+        if self.max_scroll > 0:
+            barra = self._rect_barra()
+            pygame.draw.rect(self.pantalla, self.color_barra, barra, border_radius=7)
+            thumb = self._rect_thumb()
+            pygame.draw.rect(self.pantalla, self.color_thumb, thumb, border_radius=7)
+
+    def verificar_hover(self, posicion_raton):
+        pass
+
+    def manejar_evento(self, evento):
+        if self.max_scroll == 0:
+            return False
+
+        if evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
+            thumb = self._rect_thumb()
+            if thumb.collidepoint(evento.pos):
+                self._arrastrando = True
+                self._drag_offset = evento.pos[0] - thumb.x
+                return True
+
+        elif evento.type == pygame.MOUSEBUTTONUP and evento.button == 1:
+            self._arrastrando = False
+            return False
+
+        elif evento.type == pygame.MOUSEMOTION:
+            if self._arrastrando:
+                barra = self._rect_barra()
+                thumb = self._rect_thumb()
+                ancho_thumb = thumb.width
+                rango_movimiento = self.ancho_visible - ancho_thumb
+                if rango_movimiento > 0:
+                    nueva_x_thumb = evento.pos[0] - self._drag_offset
+                    ratio = (nueva_x_thumb - barra.x) / rango_movimiento
+                    ratio = max(0.0, min(1.0, ratio))
+                    self.scroll_x = ratio * self.max_scroll
+                return True
+
+        return False

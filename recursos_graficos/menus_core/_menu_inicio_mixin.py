@@ -88,11 +88,11 @@ class MenuInicioMixin:
         self.crear_boton_atras_menu_inicio(menu_inicio)
         
         # Agregar logo
-        escala_logo = 0.65 
+        escala_logo = 0.65
         x_centro = (constantes.ANCHO_MENU_I - self.logo_rummy.get_width()) // 2
         posicion_logo = (
             x_centro - 63,
-            int(constantes.ALTO_MENU_I * 0.18)
+            int(constantes.ALTO_MENU_I * 0.10)
         )
         
         menu_inicio.agregar_imagen(self.logo_rummy, posicion_logo, escala_logo)

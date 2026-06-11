@@ -88,29 +88,27 @@ class ActualizacionMixin:
         self.determinar_turno()
         turno_actual = self.elementos_mesa.get("jugador_mano")
         nombre_jugador_turno = turno_actual[1] if turno_actual and len(turno_actual) > 1 else "Nadie"
-        
-        color_vinotinto = (128, 0, 32)
+
         color_blanco = (255, 255, 255)
-        
+
         if self.tu_turno:
             texto = f"¡ES TU TURNO! - {nombre_jugador_turno}"
-            color_borde = constantes.NARANJA
         else:
             texto = f"Turno de: {nombre_jugador_turno}"
-            color_borde = (218, 165, 32) # Dorado
 
-        indicador = self.referencia_elementos["indicador_turno"] 
-        
-        indicador.color = color_vinotinto
-        indicador.color_actual = color_vinotinto
-        indicador.color_texto = color_blanco
-        
-        # Cargamos la fuente correctamente usando el método de la clase
-        indicador.fuente = indicador.cargar_fuente(constantes.FUENTE_ESTANDAR)
-            
+        indicador = self.referencia_elementos["indicador_turno"]
+
         indicador.texto = texto
-        indicador.prepar_texto() 
-        indicador.color_borde_actual = color_borde
+        indicador.color_texto = color_blanco
+        indicador.fuente = indicador.cargar_fuente(constantes.FUENTE_ESTANDAR)
+        indicador.prepar_texto()
+
+        indicador.color = None
+        indicador.color_actual = None
+        indicador.color_borde = None
+        indicador.color_borde_actual = None
+        indicador.grosor_borde = 0
+
         self.referencia_elementos["indicador_turno"] = indicador
 
     def actualizar_mano_visual(self, mesa, accion="reorganizar"):
@@ -228,7 +226,7 @@ class ActualizacionMixin:
             mesa.botones.append(carta_visual)
             x += dx
             y += dy
-        
+            
         # Restaurar prioridades si existen
         for carta_visual in self.referencia_elementos["elementos_mis_cartas"]:
             if carta_visual.valor in prioridades_guardadas:
