@@ -51,7 +51,7 @@ class MenuMesaEsperaMixin:
         menu_mesa_espera.elemento_texto_espera = elemento_texto
 
         #crear boton desconectar del servidor
-        self.crear_boton_regresar_mesa_espera(menu_mesa_espera)
+        #self.crear_boton_regresar_mesa_espera(menu_mesa_espera)
 
         self.elementos_creados.append(menu_mesa_espera)
         return menu_mesa_espera

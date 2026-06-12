@@ -19,8 +19,8 @@ class MenuOpcionesMixin:
         from recursos_graficos.elementos_de_interfaz_de_usuario import BotonLogoMenu
         
         # 1. Aumentamos el tamaño fijo para que sea mucho más visible y cómodo
-        ancho_boton = 120  # Antes era 90
-        alto_boton = 90    # Antes era 70
+        ancho_boton = 115  # Antes era 90
+        alto_boton = 100    # Antes era 70
         
         # 2. Buscamos a "Tus Puntos" para usarlo de referencia posicional
         boton_puntos = self.referencia_elementos.get("contador_puntos")
