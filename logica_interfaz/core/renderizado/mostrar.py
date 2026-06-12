@@ -363,18 +363,21 @@ class MostrarMixin:
         color_blanco = (255, 255, 255)
         color_dorado = (218, 165, 32)
         
+        # ─── CAMBIO: Definición de colores dinámicos para las letras ───
         if self.tu_turno:
             texto = f"¡TU TURNO! - {nombre_jugador_turno}"
             color_borde = constantes.NARANJA
+            color_texto_actual = constantes.NARANJA  # Letras naranjas si es tu turno
         else:
             texto = f"Turno de: {nombre_jugador_turno}"
             color_borde = color_dorado
+            color_texto_actual = color_dorado       # Letras doradas para los demás turnos
+        # ──────────────────────────────────────────────────────────────
         
         ancho = constantes.ELEMENTO_PEQUENO_ANCHO * 0.70
         alto = constantes.ELEMENTO_PEQUENO_ALTO / 2
         x = (constantes.ANCHO_MENU_MESA - ancho) * 0.02
         y = (constantes.ALTO_MENU_MESA - alto) * 0.02
-
 
         # Imagen base del indicador de turno
         try:
@@ -394,7 +397,6 @@ class MostrarMixin:
         except Exception as e:
             print(f"Error cargando boton_base.png para indicador de turno: {e}")
 
-        
         x_texto = x + 14
         y_texto = y + 8
         
@@ -405,11 +407,11 @@ class MostrarMixin:
             alto=alto,
             x=x_texto,
             y=y_texto,
-            tamaño_fuente=27,
-            fuente=constantes.FUENTE_ESTANDAR, # <── Aquí forzamos la fuente correcta
-            color=None,            # sin fondo
+            tamaño_fuente=27,                  # Se mantiene tu tamaño de letra original
+            fuente=constantes.FUENTE_ESTANDAR, 
+            color=None,                        # sin fondo
             radio_borde=0,
-            color_texto=color_blanco,          # Letras blancas
+            color_texto=color_texto_actual,    # CAMBIO: Ahora aplica el color dorado/naranja
             color_borde=color_borde,
             grosor_borde=0
         )

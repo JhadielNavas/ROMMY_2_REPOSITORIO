@@ -56,11 +56,12 @@ class PuntosMixin:
         return puntos
     #cambio lismar
     def crear_contador_puntos(self, mesa):
+        # Aumentamos el ancho horizontal (de 0.48 a 0.62) para garantizar que todo entre en una sola línea
+        ancho = constantes.ELEMENTO_PEQUENO_ANCHO * 0.62
+        alto = constantes.ELEMENTO_PEQUENO_ALTO * 0.45
         
-        ancho = constantes.ELEMENTO_PEQUENO_ANCHO * 0.35
-        alto = constantes.ELEMENTO_PEQUENO_ALTO * 0.4
-        
-        x = (constantes.ANCHO_MENU_MESA - ancho) - 100
+        # Ajustamos sutilmente el margen X para que no colisione con los márgenes de la ventana
+        x = (constantes.ANCHO_MENU_MESA - ancho) - 120
         y = 10
         
         try:
@@ -74,11 +75,9 @@ class PuntosMixin:
 
         texto_puntos = f"Tus Puntos: {puntos_mostrar}"
         
-        color_vinotinto = (128, 0, 32)
-        color_blanco = (255, 255, 255)
-        color_dorado = (218, 165, 32)
+        color_vino_oscuro = (65, 25, 30) 
+        color_dorado = (218, 165, 32)     
         
-        # El contador sigue existiendo y funcionando igual
         contador = Elemento_texto(
             un_juego=self.un_juego,
             texto=texto_puntos,
@@ -86,20 +85,17 @@ class PuntosMixin:
             alto=alto,
             x=x,
             y=y,
-            tamaño_fuente=constantes.F_PEQUENA,
+            tamaño_fuente=22,           # Reducido a 22: Tamaño ideal, elegante y legible
             fuente=constantes.FUENTE_ESTANDAR,
-            color=color_vinotinto,             
-            radio_borde=constantes.REDONDEO_NORMAL,
-            color_texto=color_blanco,          
-            color_borde=color_dorado,          
-            grosor_borde=constantes.BORDE_INTERMEDIO
+            color=color_vino_oscuro,             
+            radio_borde=9,              
+            color_texto=color_dorado,           
+            color_borde=color_dorado,                
+            grosor_borde=2              
         )
         
         mesa.botones.append(contador)
         self.referencia_elementos["contador_puntos"] = contador
-        
-        # AQUÍ ES DONDE BORRAMOS EL CartelAlerta.
-        # Directamente retornamos el contador para que tu juego lo siga usando.
         
         return contador
     
