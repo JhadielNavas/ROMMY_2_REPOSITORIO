@@ -56,12 +56,13 @@ class PuntosMixin:
         return puntos
     #cambio lismar
     def crear_contador_puntos(self, mesa):
-        # Aumentamos el ancho horizontal (de 0.48 a 0.62) para garantizar que todo entre en una sola línea
-        ancho = constantes.ELEMENTO_PEQUENO_ANCHO * 0.62
+        # Ancho intermedio perfecto: ni muy apretado, ni muy alargado. 
+        # Justo para que soporte hasta 4 dígitos sin salirse del borde.
+        ancho = constantes.ELEMENTO_PEQUENO_ANCHO * 0.52
         alto = constantes.ELEMENTO_PEQUENO_ALTO * 0.45
         
-        # Ajustamos sutilmente el margen X para que no colisione con los márgenes de la ventana
-        x = (constantes.ANCHO_MENU_MESA - ancho) - 120
+        # Ajustamos el eje X para que quede bien posicionado a la derecha
+        x = (constantes.ANCHO_MENU_MESA - ancho) - 80
         y = 10
         
         try:
@@ -85,7 +86,7 @@ class PuntosMixin:
             alto=alto,
             x=x,
             y=y,
-            tamaño_fuente=22,           # Reducido a 22: Tamaño ideal, elegante y legible
+            tamaño_fuente=21,           # Reducido sutilmente a 21 para que encaje perfecto
             fuente=constantes.FUENTE_ESTANDAR,
             color=color_vino_oscuro,             
             radio_borde=9,              
