@@ -264,7 +264,7 @@ class MostrarMixin:
             accion=None,
         )
 
-        escala_modal = constantes.ESCALA_CARTAS * 1.4
+        escala_modal = constantes.ESCALA_CARTAS * 1.1
         padding = 20
         alto_fila_superior = alto_titulo_elem + 15
 

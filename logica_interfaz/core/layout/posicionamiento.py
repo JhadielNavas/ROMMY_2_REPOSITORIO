@@ -71,10 +71,12 @@ class PosicionamientoMixin:
             if jugador.direccion == "derecha":
                 x, y = jugador.x + (jugador.ancho - 50), jugador.y - (jugador.alto + 25)
                 x = x-100
+                y = y - 140 # un poco más arriba
                 dy = -jugador.offset_cartas
             elif jugador.direccion == "izquierda":
                 x, y = jugador.x - (jugador.ancho - 150), jugador.y - (jugador.alto + 205)
                 x = x+100
+                y = y - 60 # un poco más arriba
         return x, y, dx, dy
 
     def alinear_abajo(self, ancho, alto, alineacion_x):
