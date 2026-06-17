@@ -379,7 +379,8 @@ class Ventana(
             "menu_seleccion_sala",
             "mesa",
             "mesa_opciones",
-            "menu_instrucciones"
+            "menu_instrucciones",
+            "aviso_salida_partida"
         ]
         return menu_condicional
 
@@ -396,6 +397,12 @@ class Ventana(
     def ejecutar_manejo_eventos(self, evento):
         if self.cartel_alerta.manejar_evento(evento):
             return
+        
+        # Si el aviso de salida está visible, SOLO manejar ese aviso
+        if hasattr(self, "aviso_salida_partida") and self.aviso_salida_partida:
+            if getattr(self.aviso_salida_partida, "visible", False):
+                self.aviso_salida_partida.manejar_eventos(evento)
+                return
         
         self.boton_jugar.manejar_evento(evento)
         # manejar evento del boton silenciar solo cuando el menu inicio esté visible
@@ -416,7 +423,9 @@ class Ventana(
     
         for menu_name in menu_condicionales:
             if hasattr(self, menu_name):
-                getattr(self, menu_name).manejar_eventos(evento)
+                menu = getattr(self, menu_name)
+                if menu:
+                    menu.manejar_eventos(evento)
 
         if hasattr(self, 'mesa') and self.mesa and hasattr(self.mesa, 'menus_activos'):
             for menu in self.mesa.menus_activos:
@@ -451,6 +460,13 @@ class Ventana(
 
     def ejecutar_verificacion_hovers(self, posicion_raton):
         self.cartel_alerta.verificar_hover(posicion_raton)
+        
+        if hasattr(self, "aviso_salida_partida") and self.aviso_salida_partida:
+            if getattr(self.aviso_salida_partida, "visible", False):
+                self.aviso_salida_partida.verificar_hovers(posicion_raton)
+                self.actualizar_cursor()
+                return
+            
         self.boton_jugar.verificar_hover(posicion_raton)
         try:
             menu_visible = getattr(self.menu_inicio, 'visible', False) if hasattr(self, 'menu_inicio') else False
@@ -471,7 +487,9 @@ class Ventana(
     
         for menu_name in menu_condicionales:
             if hasattr(self, menu_name):
-                getattr(self, menu_name).verificar_hovers(posicion_raton)
+                menu = getattr(self, menu_name)
+                if menu:
+                    menu.verificar_hovers(posicion_raton)
 
         if hasattr(self, 'mesa') and self.mesa and hasattr(self.mesa, 'menus_activos'):
             for menu in self.mesa.menus_activos:
@@ -559,6 +577,9 @@ class Ventana(
         for nombre_menu in menu_condicionales:
             if hasattr(self, nombre_menu):
                 menu = getattr(self, nombre_menu)
+
+                if not menu:
+                    continue
 
                 if nombre_menu == "mesa" and hasattr(self.mesa, 'menus_activos') and self.mesa.menus_activos:
                     continue
